@@ -54,6 +54,7 @@ bar-button-background {
 bar-module-button {
   background-color: $base-transparent;
   border-radius: $border-radius-circle;
+  border: 2px solid $surface2;
   transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
   color: $subtext1;
   font-size: 22px;
@@ -62,7 +63,8 @@ bar-module-button {
 }
 
 bar-module-button:hover {
-  color: $accent-background;
+  border: 2px solid $white;
+  color: $white;
 }
 
 desktop-menu-button label {

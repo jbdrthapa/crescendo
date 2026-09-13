@@ -10,10 +10,11 @@ modules-center-container {
 
 date-time-weather-container {
   background-color: $base-transparent;
+  border-radius: $border-radius-circle;
+  border: 2px solid $surface2;
   padding-left: 15px;
   padding-right: 15px;
   min-width: 200px;
-  border-radius: $border-radius-circle;
 }
 
 date-time-weather-container button {
