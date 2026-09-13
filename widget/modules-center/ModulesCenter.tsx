@@ -22,13 +22,13 @@ export function ModulesCenter() {
     const timeService = TimeService.get_default();
 
     const button = (
-        <box cssName={"date-time-weather-container"}>
+        <box hexpand={false} cssName={"date-time-weather-container"}>
             <button onClicked={() => {
                 let settings = WidgetManager.GetSettingsWindow();
                 settings?.Today();
                 settings?.toggle();
             }} >
-                <box orientation={Gtk.Orientation.HORIZONTAL} spacing={20}>
+                <box hexpand={true} halign={Gtk.Align.CENTER} orientation={Gtk.Orientation.HORIZONTAL} spacing={20}>
                     <label label={createBinding(timeService, "time")} valign={Gtk.Align.CENTER} cssName={"bar-time"} />
                     <box orientation={Gtk.Orientation.VERTICAL}>
                         <label vexpand={true} valign={Gtk.Align.END} label={createBinding(timeService, "date")} cssName={"bar-date"} />

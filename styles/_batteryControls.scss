@@ -1,15 +1,18 @@
 @use "theme" as *;
 
+battery-container {
+    background-color: $base-transparent;
+    border-radius: $border-radius-circle;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 7px;
+}
+
 battery-percent {
     background: none;
     font-size: 11px;
     font-weight: 600;
     color: $subtext1;
-    text-shadow:
-        2px 2px 0 $crust,
-        -2px -2px 0 $crust,
-        2px -2px 0 $crust,
-        -2px 2px 0 $crust;
 }
 
 battery-bar {
@@ -22,12 +25,12 @@ battery-bar {
     >trough block.low {
         border-radius: $border-radius;
         padding: 2px;
-        background-color: $peach;
+        background-color: $red;
     }
 
     >trough block.high {
         border-radius: $border-radius;
-        background-color: $yellow;
+        background-color: $orange;
     }
 
     >trough block.full {

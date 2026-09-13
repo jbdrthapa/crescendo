@@ -4,10 +4,14 @@ bar {
   font-family: "Inter", "JetBrainsMono Nerd Font Propo", "Noto Sans CJK JP", "Noto Sans CJK KR";
   font-size: 18px;
   color: $subtext1;
+  margin: 3px;
+}
+
+graphics-mode-container {
   background-color: $base-transparent;
-  border-bottom: 2px solid $surface0;
-  margin: 0 0px 3px 0px; 
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.4), 0 2px 2px -1px rgba(0, 0, 0, 0.3);
+  border-radius: $border-radius-circle;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 .discrete-graphics-icon {
@@ -23,15 +27,15 @@ bar {
 
 .discrete-graphics-icon-active {
   @extend .discrete-graphics-icon;
-  color: $peach;
+  color: $red;
 }
 
 .discrete-graphics-icon-resuming {
   @extend .discrete-graphics-icon;
-  color: $yellow;
+  color: $orange;
 }
 
 .discrete-graphics-icon-suspending {
   @extend .discrete-graphics-icon;
-  color: $yellow;
+  color: $orange;
 }

@@ -23,7 +23,7 @@ export function TrayWidget() {
   }
 
   return (
-    <box>
+    <box cssName="tray-module-container">
       <For each={items}>
         {(item) => (
           <button $={(self) => init(self, item)} cssName="tray-module-button">

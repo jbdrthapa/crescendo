@@ -1,17 +1,10 @@
 @use "theme" as *;
 
 power-profile-button {
-    background-color: transparent;
-    transition: transform 340ms cubic-bezier(.33, 1, .68, 1);
-    background: none;
-    text-shadow:
-        2px 2px 0 $base,
-        -2px -2px 0 $base,
-        2px -2px 0 $base,
-        -2px 2px 0 $base;
-}
-power-profile-button:hover{
-    transform: scale(1.25);
+    background-color: $base-transparent;
+    border-radius: $border-radius-circle;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 .power-profile-power-saver {
@@ -29,7 +22,7 @@ power-profile-button:hover{
 .power-profile-performance {
     font-size: 26px;
     font-weight: 600;
-    color: $peach;
+    color: $red;
 }
 
 .power-profile-unknown {

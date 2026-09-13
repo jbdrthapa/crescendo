@@ -3,6 +3,7 @@
 */
 
 $border-radius: 15px;
+$border-radius-circle: 99px;
 
 /* Borders */
 $border: #30363d;
@@ -17,8 +18,8 @@ $subtext0: #8b949e;
 $subtext1: #6e7681;
 
 /* Accent (GitHub Blue) */
-$accent-background: #1f6feb;
-$accent-background-transparent: #1f6febfa;
+$accent-background: #d82e43;
+$accent-background-transparent: #d82e43fa;
 $accent-foreground: #0d1117;
 
 /* Base Layers */
@@ -52,10 +53,10 @@ $overlay2: #6e7681;
 $overlay2-transparent: #6e7681fa;
 
 /* Semantic Colors */
-$red: #f85149;
-$orange: #db6d28;
+$red: #d82e43;
+$orange: #f85149;
 $yellow: #f2cc60;
-$green: #238636;
+$green: #2ed858;
 $teal: #39c5cf;
 $cyan: #58a6ff;
 $blue: #1f6feb;

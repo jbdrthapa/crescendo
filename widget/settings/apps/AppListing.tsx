@@ -2,78 +2,66 @@ import Gtk from "gi://Gtk?version=4.0";
 import Apps from "gi://AstalApps";
 import { Gdk } from "ags/gtk4";
 import { For, createState } from "ags";
-import { subprocess, execAsync } from "ags/process";
+import { execAsync, subprocess } from "ags/process";
 
 const terminal = "kitty";
-let appListing: any;
+let cached: Gtk.Widget | null = null;
 
 function launch(app?: Apps.Application) {
     if (!app) return;
 
+    // Close the compositor overview
     execAsync("niri msg action close-overview");
 
-    const needsTerminal = app.app.get_boolean("Terminal");
-    const launchCmd = needsTerminal
-        ? `${terminal} -e ${app.executable}`
-        : app.executable;
+    const needsTerminal = app.get_key("Terminal") === "true";
 
     if (needsTerminal) {
-        subprocess(["bash", "-c", `${launchCmd} >/dev/null 2>&1 &`]);
+        const cmd = `${terminal} -e ${app.executable}`;
+        subprocess(["bash", "-c", `${cmd} >/dev/null 2>&1 &`]);
     } else {
         app.launch();
     }
 }
 
+// ---------------------------------------------------------
+// App Item Component
+// ---------------------------------------------------------
 function AppItem({ app }: { app: Apps.Application }) {
-    const appNameDescLengthMax = 100;
+    const MAX = 100;
+    const cut = (s?: string | null) =>
+        s && s.length > MAX ? s.substring(0, MAX) + "..." : s || "";
 
-    const appName =
-        app.name.length > appNameDescLengthMax
-            ? app.name.substring(0, appNameDescLengthMax) + "..."
-            : app.name;
-
-    let appDesc: string | undefined;
-    if (app.description) {
-        appDesc =
-            app.description.length > appNameDescLengthMax
-                ? app.description.substring(0, appNameDescLengthMax) + "..."
-                : app.description;
-    }
-
-    let appTooltip = "<b>Application:</b> " + app.name;
-    if (app.description !== null) {
-        appTooltip += "\n<b>Description:</b> " + app.description;
-    }
+    const tooltip =
+        `<b>Application:</b> ${app.name}` +
+        (app.description ? `\n<b>Description:</b> ${app.description}` : "");
 
     return (
-        <button
-            css="background: none;"
-            onClicked={() => launch(app)}
-        >
+        <button css="background: none;" onClicked={() => launch(app)}>
             <box
                 orientation={Gtk.Orientation.HORIZONTAL}
-                halign={Gtk.Align.START}
-                tooltipMarkup={appTooltip}
                 spacing={20}
+                halign={Gtk.Align.START}
+                tooltipMarkup={tooltip}
             >
                 <image
                     iconName={app.icon_name || "image-missing"}
                     pixelSize={56}
-                    vexpand={true}
+                    vexpand
                     valign={Gtk.Align.CENTER}
                 />
+
                 <box
                     orientation={Gtk.Orientation.VERTICAL}
-                    vexpand={true}
+                    vexpand
                     valign={Gtk.Align.CENTER}
                 >
                     <label
-                        label={appName}
+                        label={cut(app.name)}
                         cssName="app-name"
                         halign={Gtk.Align.START}
                     />
                     <label
-                        label={appDesc}
+                        label={cut(app.description)}
                         cssName="app-desc"
                         halign={Gtk.Align.START}
                     />
@@ -83,38 +71,40 @@ function AppItem({ app }: { app: Apps.Application }) {
     );
 }
 
+// ---------------------------------------------------------
+// Main Listing
+// ---------------------------------------------------------
 export function AppListing() {
-    if (appListing) return appListing;
+    if (cached) return cached;
 
-    let searchentry: Gtk.Entry;
-    let appsScroll: Gtk.ScrolledWindow;
-    let flowBox: Gtk.FlowBox;
+    let search!: Gtk.Entry;
+    let scroll!: Gtk.ScrolledWindow;
 
     const apps = new Apps.Apps();
-    const initialResults = apps.fuzzy_query("");
-    const [list, setList] = createState(initialResults);
+    const [list, setList] = createState(apps.fuzzy_query(""));
 
-    function search(text: string) {
-        const results =
-            text === "" ? apps.fuzzy_query("") : apps.fuzzy_query(text);
-        setList(results);
-    }
+    const updateSearch = (text: string) =>
+        setList(text ? apps.fuzzy_query(text) : apps.fuzzy_query(""));
 
+    // -----------------------------------------------------
+    // Keyboard Handler
+    // -----------------------------------------------------
     function onKey(
-        _e: Gtk.EventControllerKey,
+        _ctrl: Gtk.EventControllerKey,
         keyval: number,
-        _: number,
+        _code: number,
         mod: number,
     ) {
         if (keyval === Gdk.KEY_Escape) {
-            appListing.visible = false;
+            cached!.visible = false;
             return true;
         }
 
         if (mod === Gdk.ModifierType.ALT_MASK) {
-            for (const i of [1, 2, 3, 4, 5, 6, 7, 8, 9] as const) {
-                if (keyval === Gdk[`KEY_${i}`]) {
-                    launch(list.peek()[i - 1]);
+            const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+            for (const n of nums) {
+                if (keyval === Gdk[`KEY_${n}`]) {
+                    launch(list.peek()[n - 1]);
                     return true;
                 }
             }
@@ -123,22 +113,28 @@ export function AppListing() {
         return false;
     }
 
+    // -----------------------------------------------------
+    // Search Entry
+    // -----------------------------------------------------
     const searchEntry = (
         <entry
-            cssName={"search-entry"}
-            $={(ref) => (searchentry = ref)}
-            onNotifyText={({ text }) => search(text)}
-            onActivate={() => launch(list.peek()[0])}
+            cssName="search-entry"
             placeholderText=""
+            $={(ref) => (search = ref)}
+            onNotifyText={({ text }) => updateSearch(text)}
+            onActivate={() => launch(list.peek()[0])}
         />
-    ) as any;
+    ) as Gtk.Entry;
 
-    flowBox = (
+    // -----------------------------------------------------
+    // FlowBox
+    // -----------------------------------------------------
+    const flow = (
         <Gtk.FlowBox
             vexpand
             hexpand
             selectionMode={Gtk.SelectionMode.SINGLE}
-            activate_on_single_click={true}
+            activate_on_single_click
             columnSpacing={0}
             rowSpacing={10}
             minChildrenPerLine={1}
@@ -146,14 +142,12 @@ export function AppListing() {
             homogeneous={false}
             valign={Gtk.Align.START}
             halign={Gtk.Align.START}
-            onChildActivated={(self, child) => {
-                const button = child.child;
-                if (button) button.activate();
-            }}
+            focus_on_click={false}
+            onChildActivated={(_, child) => child.child?.activate()}
         >
             <For each={list}>
                 {(app) => (
-                    <Gtk.FlowBoxChild cssName="app-button">
+                    <Gtk.FlowBoxChild cssName="app-button" can_focus={false}>
                         <AppItem app={app} />
                     </Gtk.FlowBoxChild>
                 )}
@@ -161,39 +155,39 @@ export function AppListing() {
         </Gtk.FlowBox>
     );
 
-    appListing = (
-        <box
-            cssName="modules-left-container"
-            orientation={Gtk.Orientation.VERTICAL}
-        >
+    // -----------------------------------------------------
+    // Root Container
+    // -----------------------------------------------------
+    cached = (
+        <box cssName="modules-left-container" orientation={Gtk.Orientation.VERTICAL}>
             {searchEntry}
             <scrolledwindow
                 vexpand
-                heightRequest={500}
                 hexpand
+                heightRequest={500}
                 widthRequest={800}
-                $={(ref) => (appsScroll = ref)}
+                $={(ref) => (scroll = ref)}
             >
-                {flowBox}
+                {flow}
             </scrolledwindow>
         </box>
-    ) as any;
+    ) as Gtk.Widget;
 
+    // -----------------------------------------------------
+    // Key Controller
+    // -----------------------------------------------------
     const keyController = new Gtk.EventControllerKey();
     keyController.connect("key-pressed", onKey);
-    appListing.add_controller(keyController);
+    cached.add_controller(keyController);
 
-    appListing.connect("notify::visible", () => {
-        if (appListing.visible) {
-            searchEntry.text = "";
-            searchEntry.grab_focus();
-
-            if (appsScroll) {
-                const vadjustment = appsScroll.get_vadjustment();
-                vadjustment.set_value(vadjustment.get_lower());
-            }
-        }
+    // -----------------------------------------------------
+    // Focus on map
+    // -----------------------------------------------------
+    cached.connect("map", () => {
+        search.set_can_focus(true);
+        search.grab_focus();
+        search.set_text("");
     });
 
-    return appListing;
+    return cached;
 }

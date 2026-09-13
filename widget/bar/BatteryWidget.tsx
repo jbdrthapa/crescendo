@@ -84,14 +84,12 @@ export function BatteryWidget() {
     })
 
     return (
-        <box vexpand valign={Gtk.Align.CENTER} orientation={Gtk.Orientation.VERTICAL} tooltipMarkup={batteryTooltip}>
+        <box cssName="battery-container" orientation={Gtk.Orientation.VERTICAL} tooltipMarkup={batteryTooltip}>
             <levelbar
                 widthRequest={55}
                 heightRequest={15}
                 cssName={"battery-bar"}
                 value={percentBinding.as(v => v)}
-                valign={Gtk.Align.CENTER}
-                hexpand={false}
             />
             <label label={batteryState} cssName={"battery-percent"} />
         </box>

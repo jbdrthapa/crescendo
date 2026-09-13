@@ -360,9 +360,7 @@ class InternalDisplayService extends GObject.Object {
                     }
                 }
 
-                if (displayDevice) {
-                    console.log(`Found backlight device: ${displayDevice}`);
-                } else {
+                if (!displayDevice) {
                     console.log("No AMD or Intel backlight device found.");
                 }
 

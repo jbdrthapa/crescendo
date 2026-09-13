@@ -1,9 +1,11 @@
 @use "theme" as *;
 
 workspace-container {
+    background-color: $base-transparent;
+    border-radius: $border-radius-circle;
     margin: 0px;
-    padding-top: 2px;
-    padding-bottom: 2px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 .workspace-item {
@@ -29,7 +31,7 @@ workspace-container {
     color: $green;
 }
 
-.workspace-item.focus{
+.workspace-item.focus {
     color: $subtext1;
 }
 
@@ -39,6 +41,7 @@ active-window-icon {
     -gtk-icon-size: 26px;
     margin: 0;
 }
+
 active-window-icon:hover {
     transform: scale(1.15);
 }

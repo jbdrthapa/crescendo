@@ -85,8 +85,6 @@ export function WallpaperSettings() {
         selection_mode: Gtk.SelectionMode.NONE,
     });
 
-    console.log("Wallpaper cache folder: ", WALLPAPER_DIR_CACHE);
-
 
     const files: string[] = [];
     try {

@@ -86,11 +86,8 @@ export function Players() {
 
     players.subscribe(() => {
         const currentPlayers = players() || [];
-        print("currentplayers: " + currentPlayers);
 
         if (currentPlayers.length > 0) {
-            print("found some players");
-
             const currentActive = activePlayer();
             const isCurrentPlaying = currentActive && currentActive.playbackStatus === AstalMpris.PlaybackStatus.PLAYING;
 
@@ -105,7 +102,6 @@ export function Players() {
                 } else {
                     const running = currentPlayers.some(p => p === currentActive);
                     if (!running) {
-                        print("Fallback to first available player: " + currentPlayers[0].identity);
                         setActivePlayer(currentPlayers[0]);
                     }
                 }

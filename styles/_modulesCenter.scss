@@ -8,6 +8,14 @@ modules-center-container {
   padding: 20px;
 }
 
+date-time-weather-container {
+  background-color: $base-transparent;
+  padding-left: 15px;
+  padding-right: 15px;
+  min-width: 200px;
+  border-radius: $border-radius-circle;
+}
+
 date-time-weather-container button {
   background: none;
   margin: 0px;

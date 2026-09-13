@@ -1,5 +1,12 @@
 @use "theme" as *;
 
+tray-module-container {
+  background-color: $base-transparent;
+  border-radius: $border-radius-circle;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
 tray-module-button {
   border-radius: $border-radius;
   transition: transform 340ms cubic-bezier(.33, 1, .68, 1);

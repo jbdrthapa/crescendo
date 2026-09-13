@@ -1,9 +1,10 @@
 @use "theme" as *;
 
 dock-window {
-    background: none;
-    background-color: transparent;
-    box-shadow: none;
+    background-color: $base-transparent;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: $border-radius-circle;
 }
 
 dock-item {
@@ -45,6 +46,6 @@ dock-item image:hover {
 }
 
 .dock-button.close:hover {
-    color: $peach;
+    color: $red;
     transform: scale(1.2);
 }

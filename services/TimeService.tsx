@@ -94,7 +94,7 @@ class InternalTimeService extends GObject.Object {
             timezoneData = await this.getTimezone();
             if (!timezoneData) {
                 attempt++;
-                console.log("Timezone data retrieve failed, retry attempt: ", attempt);
+                console.debug("Timezone data retrieve failed, retry attempt: ", attempt);
                 await delay(retryDelay);
                 retryDelay *= 2;
             }
@@ -163,8 +163,8 @@ class InternalTimeService extends GObject.Object {
                 return { timezone: data.timezone, latitude: data.latitude, longitude: data.longitude };
             }
         }
-        catch {
-            console.log("Get timezone failed");
+        catch (error) {
+            console.debug("Get timezone failed. \n" + error);
         }
     }
 
