@@ -15,7 +15,7 @@ power-button-box {
 }
 
 power-button-container-large {
-    background-color: $accent-background;
+    background-color: $surface1-transparent;
     padding: 15px;
     border: 1px solid $surface1;
     border-radius: $border-radius;
@@ -36,13 +36,12 @@ power-button-large {
 }
 
 power-button-large:hover {
-    background-color: $surface1;
     color: $accent-background;
-    transform: scale(1.2);
+    transform: scale(1.05);
 }
 
 power-button-caption {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 600;
-    color: $black;
+    color: $overlay1;
 }
