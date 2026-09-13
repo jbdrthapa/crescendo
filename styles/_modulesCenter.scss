@@ -108,6 +108,7 @@ detail-calendar .day-name {
 /* Style the current day */
 detail-calendar .today {
   color: $green;
+  background-color: $green-translucent;
   border: 2px solid $green;
   border-radius: $border-radius;
   font-weight: bold;
@@ -138,7 +139,9 @@ detail-calendar grid label {
 
 /* Highlight days*/
 detail-calendar grid label:hover {
+  background-color: $accent-background-translucent;
   border: 2px solid $accent-background;
+  color: $accent-background;
   font-weight: 600;
   border-radius: $border-radius;
 }

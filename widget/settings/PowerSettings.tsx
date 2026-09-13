@@ -183,7 +183,7 @@ export function PowerSettings() {
                                 </box>
 
                                 <box orientation={Gtk.Orientation.HORIZONTAL} halign={Gtk.Align.CENTER}>
-                                    <image file={batteryIconPath} pixelSize={128} />
+                                    <Gtk.ProgressBar fraction={rawPercentage} ></Gtk.ProgressBar>
                                     <label label={percentage} css="font-weight:800; font-size:32px;" />
                                 </box>
 

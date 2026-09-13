@@ -104,9 +104,9 @@ slider-device-name {
 
 // /* The part showing current progress */
 .slider-control highlight {
-  background-color: $accent-background;
+  background-color: $accent-background-translucent;
   border-radius: $border-radius;
-  border: 1px solid $base;
+  border: 1px solid $accent-background;
 }
 
 .slider-control slider {
@@ -125,12 +125,12 @@ switch {
 }
 
 switch:checked {
-  background-color: $accent-background;
-  border-color: $black;
+  background-color: $accent-background-translucent;
+  border-color: $accent-background;
 }
 
 switch slider {
-  background-color: $overlay2;
+  background-color: $surface2;
   border-radius: 100%;
   min-height: 10px;
   min-width: 10px;
@@ -138,5 +138,20 @@ switch slider {
 }
 
 switch:checked slider {
-  background-color: $surface2;
+  background-color: $accent-background;
+}
+
+progressbar trough progress {
+  background-image: none;
+  background-color: $accent-background-translucent;
+  border: 1px solid $accent-background;
+}
+
+progressbar trough {
+  background: none;
+  padding: 5px;
+}
+
+progressbar, progressbar trough, progressbar progress {
+  min-height: 15px;
 }

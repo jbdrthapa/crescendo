@@ -135,11 +135,15 @@ settings-notebook {
   }
 
   & tab:hover {
+    background-color: $accent-background-translucent;
     border: 2px solid $accent-background;
+    color: $accent-background;
   }
 
   & tab:checked {
-    border: 2px solid $accent-background;
+    border: 2px solid $green;
+    background-color: $green-translucent;
+    color: $green;
     box-shadow: inset 0 -1px 0 0 $base, 0 4px 6px rgba(0, 0, 0, 0.5);
   }
 }

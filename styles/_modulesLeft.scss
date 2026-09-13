@@ -33,16 +33,19 @@ search-entry {
 }
 
 search-entry:hover {
-  border-color: $accent-background-transparent;
+  background-color: $accent-background-translucent;
+  border-color: $accent-background;
 }
 
 app-button {
   background: none;
+  border: 1px solid transparent;
   min-width: 800px;
 }
 
 app-button-highlight {
-  background-color: $accent-background-transparent;
+  background-color: $accent-background-translucent;
+  border: 1px solid $accent-background;
   border-radius: $border-radius;
 }
 
@@ -55,19 +58,19 @@ app-button:focus {
 }
 
 app-button:hover app-name {
-  color: $black;
+  color: $accent-background;
 }
 
 app-button:hover app-desc {
-  color: $black;
+  color: $accent-background;
 }
 
 app-button:focus app-name {
-  color: $black;
+  color: $accent-background;
 }
 
 app-button:focus app-desc {
-  color: $black;
+  color: $accent-background;
 }
 
 app-name {
