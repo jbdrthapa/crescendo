@@ -58,19 +58,19 @@ app-button:focus {
 }
 
 app-button:hover app-name {
-  color: $accent-background;
+  color: $subtext0;
 }
 
 app-button:hover app-desc {
-  color: $accent-background;
+  color: $subtext1;
 }
 
 app-button:focus app-name {
-  color: $accent-background;
+  color: $subtext0;
 }
 
 app-button:focus app-desc {
-  color: $accent-background;
+  color: $subtext1;
 }
 
 app-name {
