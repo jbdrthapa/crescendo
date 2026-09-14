@@ -24,7 +24,7 @@ search-entry {
   background-color: $crust-transparent;
   color: $accent-background;
   padding-left: 20px;
-  border-radius: $border-radius;
+  border-radius: $border-radius-circle;
   border: 2px solid $surface1;
   margin-bottom: 30px;
   font-size: 16px;
@@ -39,14 +39,15 @@ search-entry:hover {
 
 app-button {
   background: none;
-  border: 1px solid transparent;
-  min-width: 800px;
+  border: 2px solid transparent;
+  min-width: 1060px;
+  padding-left: 10px;
 }
 
 app-button-highlight {
   background-color: $accent-background-translucent;
-  border: 1px solid $accent-background;
-  border-radius: $border-radius;
+  border: 2px solid $accent-background;
+  border-radius: $border-radius-circle;
 }
 
 app-button:hover {
