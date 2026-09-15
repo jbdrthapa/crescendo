@@ -1,6 +1,7 @@
 import Gtk from "gi://Gtk?version=4.0";
 import GLib from "gi://GLib";
 import { For, With, createBinding, createState, createComputed } from "ags";
+import { interval } from "ags/time";
 import AstalMpris from "gi://AstalMpris?version=0.1";
 import AstalCava from "gi://AstalCava";
 
@@ -46,6 +47,66 @@ function CoverArt({ mprisPlayer }: { mprisPlayer: AstalMpris.Player }) {
         </box>
     );
 }
+
+function Seekbar({ mprisPlayer }: { mprisPlayer: AstalMpris.Player }) {
+
+    const rawLength = createBinding(mprisPlayer, "length");
+    const length = createComputed(() => {
+        var val = rawLength();
+        if (val === null || val === undefined) {
+            return "0";
+        }
+        return val.toString();
+    });
+    const rawPosition = createBinding(mprisPlayer, "position");
+    const position = createComputed(() => {
+        var val = rawPosition();
+        if (val === null || val === undefined) {
+            return "0";
+        }
+        return val.toString();
+    });
+
+    const adjustment = new Gtk.Adjustment({
+        lower: 0,
+        upper: rawLength() || 0,
+        value: mprisPlayer.position,
+    });
+
+    createComputed(() => {
+        adjustment.upper = rawLength();
+    });
+
+    const timer = interval(1000, () => {
+        adjustment.value = mprisPlayer.position;
+    });
+
+    return (
+        <box hexpand>
+            <label label={position} />
+            <Gtk.Scale
+                hexpand
+                drawValue={false}
+                adjustment={adjustment}
+
+                onChangeValue={(_, value) => {
+
+                    const targetPosition = adjustment.value;
+                    const offset = targetPosition - mprisPlayer.position;
+                    const trackId = mprisPlayer.trackid || "";
+
+                    console.log("Current position:", mprisPlayer.position);
+                    console.log("Target position:", targetPosition);
+                    console.log("Calculated relative offset:", offset);
+
+                    mprisPlayer.set_position(targetPosition);
+                }}
+            />
+            <label label={length} />
+        </box>
+    );
+}
+
 
 function Buttons({ mprisPlayer }: { mprisPlayer: AstalMpris.Player }) {
     const canGoPrevious = createBinding(mprisPlayer, "canGoPrevious");
@@ -175,6 +236,7 @@ export function Players() {
                                 <box spacing={10} hexpand>
                                     {CoverArt({ mprisPlayer: player })}
                                     {MediaInfo({ mprisPlayer: player })}
+                                    {Seekbar({ mprisPlayer: player })}
                                     {Buttons({ mprisPlayer: player })}
                                 </box>
 
