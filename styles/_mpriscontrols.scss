@@ -56,6 +56,47 @@ mpris-cover-art.playing image {
     animation: spin 15s linear infinite;
 }
 
+mpris-seekbar-container {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+mpris-seekbar-position {
+    color: $subtext1;
+    font-size: 14px;
+    font-weight: 600;
+    background-color: $overlay0-translucent;
+    border: 1px solid $overlay0;
+    border-radius: $border-radius;
+    min-width: 45px;
+    min-height: 45px;
+}
+
+/* The overall widget container */
+music-progress {
+    padding: 20px;
+}
+
+music-progress trough {
+    background-color: $surface0-transparent;
+    border-radius: $border-radius;
+    min-height: 15px;
+    border: 1px solid $overlay1;
+}
+
+music-progress highlight {
+    background-color: $accent-background-translucent;
+    border-radius: $border-radius;
+    border: 1px solid $accent-background;
+}
+
+music-progress slider {
+    background: none;
+    border: none;
+    box-shadow: none;
+    outline: none;
+}
+
 .player-tab {
     padding: 5px;
     border: 2px solid transparent;

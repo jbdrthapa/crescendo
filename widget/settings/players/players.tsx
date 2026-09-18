@@ -26,6 +26,7 @@ function MediaInfo({ mprisPlayer }: { mprisPlayer: AstalMpris.Player }) {
         <box valign={Gtk.Align.CENTER} halign={Gtk.Align.FILL} orientation={Gtk.Orientation.VERTICAL} cssName={"mpris-media-info"}>
             <label xalign={0} label={titleText} tooltipText={title} cssName={"mpris-title"} />
             <label xalign={0} label={artistText} tooltipText={artist} cssName={"mpris-artist"} />
+            {Seekbar({ mprisPlayer: mprisPlayer })}
         </box>
     );
 }
@@ -56,6 +57,7 @@ function Seekbar({ mprisPlayer }: { mprisPlayer: AstalMpris.Player }) {
         if (val === null || val === undefined) {
             return "0";
         }
+        val = Math.trunc(val);
         return val.toString();
     });
     const rawPosition = createBinding(mprisPlayer, "position");
@@ -64,6 +66,7 @@ function Seekbar({ mprisPlayer }: { mprisPlayer: AstalMpris.Player }) {
         if (val === null || val === undefined) {
             return "0";
         }
+        val = Math.trunc(val);
         return val.toString();
     });
 
@@ -82,13 +85,13 @@ function Seekbar({ mprisPlayer }: { mprisPlayer: AstalMpris.Player }) {
     });
 
     return (
-        <box hexpand>
-            <label label={position} />
+        <box hexpand cssName="mpris-seekbar-container">
+            <label label={position} cssName="mpris-seekbar-position" />
             <Gtk.Scale
                 hexpand
                 drawValue={false}
                 adjustment={adjustment}
-
+                cssName="music-progress"
                 onChangeValue={(_, value) => {
 
                     const targetPosition = adjustment.value;
@@ -102,7 +105,7 @@ function Seekbar({ mprisPlayer }: { mprisPlayer: AstalMpris.Player }) {
                     mprisPlayer.set_position(targetPosition);
                 }}
             />
-            <label label={length} />
+            <label label={length} cssName="mpris-seekbar-position" />
         </box>
     );
 }
@@ -236,12 +239,7 @@ export function Players() {
                                 <box spacing={10} hexpand>
                                     {CoverArt({ mprisPlayer: player })}
                                     {MediaInfo({ mprisPlayer: player })}
-                                    {Seekbar({ mprisPlayer: player })}
                                     {Buttons({ mprisPlayer: player })}
-                                </box>
-
-                                <box halign={Gtk.Align.CENTER} spacing={4}>
-
                                 </box>
 
                             </box>
