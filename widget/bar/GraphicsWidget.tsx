@@ -19,7 +19,7 @@ export function GraphicsWidget() {
 
   return (
     <box cssName="graphics-mode-container">
-      <label label="" tooltipText={rawGraphicsStatusMode()} cssClasses={graphicsClass} vexpand valign={Gtk.Align.CENTER} />
+      <label label="" tooltipText={rawGraphicsStatusMode} cssClasses={graphicsClass} vexpand valign={Gtk.Align.CENTER} />
     </box>
   )
 }

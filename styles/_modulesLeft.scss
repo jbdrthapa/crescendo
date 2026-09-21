@@ -24,7 +24,7 @@ search-entry {
   background-color: $crust-transparent;
   color: $accent-background;
   padding-left: 20px;
-  border-radius: $border-radius;
+  border-radius: $border-radius-circle;
   border: 2px solid $surface1;
   margin-bottom: 30px;
   font-size: 16px;
@@ -33,17 +33,21 @@ search-entry {
 }
 
 search-entry:hover {
-  border-color: $accent-background-transparent;
+  background-color: $accent-background-translucent;
+  border-color: $accent-background;
 }
 
 app-button {
   background: none;
-  min-width: 800px;
+  border: 2px solid transparent;
+  min-width: 1060px;
+  padding-left: 10px;
 }
 
 app-button-highlight {
-  background-color: $accent-background-transparent;
-  border-radius: $border-radius;
+  background-color: $accent-background-translucent;
+  border: 2px solid $accent-background;
+  border-radius: $border-radius-circle;
 }
 
 app-button:hover {
@@ -55,19 +59,19 @@ app-button:focus {
 }
 
 app-button:hover app-name {
-  color: $black;
+  color: $subtext0;
 }
 
 app-button:hover app-desc {
-  color: $black;
+  color: $subtext1;
 }
 
 app-button:focus app-name {
-  color: $black;
+  color: $subtext0;
 }
 
 app-button:focus app-desc {
-  color: $black;
+  color: $subtext1;
 }
 
 app-name {

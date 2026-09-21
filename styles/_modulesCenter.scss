@@ -10,10 +10,11 @@ modules-center-container {
 
 date-time-weather-container {
   background-color: $base-transparent;
+  border-radius: $border-radius-circle;
+  border: 2px solid $surface2;
   padding-left: 15px;
   padding-right: 15px;
   min-width: 200px;
-  border-radius: $border-radius-circle;
 }
 
 date-time-weather-container button {
@@ -108,8 +109,9 @@ detail-calendar .day-name {
 /* Style the current day */
 detail-calendar .today {
   color: $green;
+  background-color: $green-translucent;
   border: 2px solid $green;
-  border-radius: $border-radius;
+  border-radius: 9999px;
   font-weight: bold;
 }
 
@@ -129,7 +131,7 @@ detail-calendar header {
 /* Days */
 detail-calendar grid label {
   color: $subtext1;
-  font-size: 18px;
+  font-size: 16px;
   background-color: transparent;
   border: 2px solid transparent;
   padding: 5px;
@@ -138,7 +140,9 @@ detail-calendar grid label {
 
 /* Highlight days*/
 detail-calendar grid label:hover {
+  background-color: $accent-background-translucent;
   border: 2px solid $accent-background;
+  color: $accent-background;
   font-weight: 600;
-  border-radius: $border-radius;
+  border-radius: 9999px;
 }

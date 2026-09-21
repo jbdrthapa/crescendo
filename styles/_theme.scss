@@ -18,8 +18,9 @@ $subtext0: #8b949e;
 $subtext1: #6e7681;
 
 /* Accent (GitHub Blue) */
-$accent-background: #d82e43;
-$accent-background-transparent: #d82e43fa;
+$accent-background: #C2410CFF;
+$accent-background-transparent: #C2410Cfa;
+$accent-background-translucent: #C2410C21;
 $accent-foreground: #0d1117;
 
 /* Base Layers */
@@ -45,6 +46,7 @@ $surface2-transparent: #30363dfa;
 /* Overlays */
 $overlay0: #30363d;
 $overlay0-transparent: #30363dfa;
+$overlay0-translucent:#30363d21;
 
 $overlay1: #484f58;
 $overlay1-transparent: #484f58fa;
@@ -54,13 +56,22 @@ $overlay2-transparent: #6e7681fa;
 
 /* Semantic Colors */
 $red: #d82e43;
+$red-translucent: #d82e4321;
 $orange: #f85149;
+$orange-translucent: #f8514921;
 $yellow: #f2cc60;
+$yellow-translucent: #f2cc6021;
 $green: #2ed858;
+$green-translucent: #2ed85821;
 $teal: #39c5cf;
+$teal-translucent: #39c5cf21;
 $cyan: #58a6ff;
-$blue: #1f6feb;
+$cyan-translucent: #58a6ff21;
+$blue: #1685F8;
+$blue-translucent: #1685F821;
 $magenta: #d2a8ff;
+$magenta-translucent: #d2a8ff21;
+
 
 /* Neutral */
 $white: #c9d1d9;

@@ -19,6 +19,7 @@ pill-button {
 }
 
 pill-button:hover {
+  background-color: $accent-background-translucent;
   border: 2px solid $accent-background;
 }
 
@@ -40,9 +41,9 @@ pill-button-name {
 
 pill-button-detail {
   background-color: transparent;
-  color: $accent-background;
+  color: $overlay1;
   font-weight: 400;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 pill-content-header {

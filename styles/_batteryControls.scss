@@ -3,6 +3,7 @@
 battery-container {
     background-color: $base-transparent;
     border-radius: $border-radius-circle;
+    border: 2px solid $surface2;
     padding-left: 15px;
     padding-right: 15px;
     padding-top: 7px;
@@ -18,24 +19,27 @@ battery-percent {
 battery-bar {
     >trough {
         border-radius: $border-radius;
-        border: 2px solid $overlay0;
+        border: 2px solid transparent;
         background-color: $base-transparent;
     }
 
     >trough block.low {
         border-radius: $border-radius;
         padding: 2px;
-        background-color: $red;
+        background-color: $red-translucent;
+        border: 2px solid $red;
     }
 
     >trough block.high {
         border-radius: $border-radius;
-        background-color: $orange;
+        background-color: $orange-translucent;
+        border: 2px solid $orange;
     }
 
     >trough block.full {
         border-radius: $border-radius;
-        background-color: $green;
+        background-color: $green-translucent;
+        border: 2px solid $green;
     }
 
     >trough block.empty {

@@ -126,20 +126,25 @@ settings-notebook {
     background-color: $surface0;
     transition: all 350ms cubic-bezier(0.4, 0, 0.2, 1);
     color: $overlay1;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 400;
     min-height: 15px;
     padding: 4px 8px;
     margin: 3px;
-    border: 2px solid $surface2;
-    border-radius: 99px;
+    border: 1px solid $surface2;
+    border-radius: $border-radius-circle;
   }
 
   & tab:hover {
-    border: 2px solid $accent-background;
+    background-color: $accent-background-translucent;
+    border: 1px solid $accent-background;
+    color: $accent-background;
   }
 
   & tab:checked {
-    border: 2px solid $accent-background;
+    border: 1px solid $green;
+    background-color: $green-translucent;
+    color: $green;
     box-shadow: inset 0 -1px 0 0 $base, 0 4px 6px rgba(0, 0, 0, 0.5);
   }
 }
