@@ -1,40 +1,43 @@
 crescendo, custom shell for Tiling Window Managers
  
 ## Bar
-![Bar 1](screenshots/Bar.png?v=1)
-
-## Application Launcher
-![Application Launcher](screenshots/Launcher.png?v=6)
+![Bar 1](screenshots/Bar.png)
 
 ## Menu
-![Menu](screenshots/Menu.png?v=1)
+![Menu](screenshots/Menu.png)
 
 ## Notifications
-![Notification](screenshots/Notification.png?v=6)
+![Notification](screenshots/Notification.png)
 
 ## Lock Screen
-![Lock Screen](screenshots/LockScreen.png?v=1)
+![Lock Screen](screenshots/LockScreen.png)
 
 ## Power Options 
-![Power Settings](screenshots/Power-Options.png?v=1)
+![Power Settings](screenshots/Power-Options.png)
 
 ## Today
-![Time & Calendar](screenshots/Settings-Today.png?v=1)
+![Time & Calendar](screenshots/Settings-Today.png)
 
 ## Apps
-![Time & Calendar](screenshots/Settings-Apps.png?v=1)
+![Time & Calendar](screenshots/Settings-Apps.png)
 
 ## Wallpaper 
-![Wallpaper Settings](screenshots/Settings-Wallpapers.png?v=1)
+![Wallpaper Settings](screenshots/Settings-Wallpaper.png)
 
 ## Mpris
-![Wallpaper Settings](screenshots/Settings-Mpris.png?v=1)
+![Wallpaper Settings](screenshots/Settings-Mpris.png)
 
 ## Power
-![Power Options](screenshots/Settings-Power.png?v=1)
+![Power Options](screenshots/Settings-Power.png)
 
 ## About 
-![About](screenshots/Settings-About.png?v=5)
+![About](screenshots/Settings-About.png)
+
+## Preferences 
+![Preferences](screenshots/Settings-Preferences.png)
+
+## Desktop Context Menu
+![Desktop Context Menu](screenshots/Desktop-Context-Menu.png)
 
 ## Profile the application
 GJS_ENABLE_PROFILER=1 ags run
