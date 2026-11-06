@@ -5,8 +5,8 @@ workspace-container {
     border-radius: $border-radius-circle;
     border: 2px solid $surface2;
     margin: 0px;
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .workspace-item {
@@ -16,8 +16,8 @@ workspace-container {
     border-radius: $border-radius;
     padding-top: 0px;
     padding-bottom: 0px;
-    padding-left: 5px;
-    padding-right: 5px;
+    padding-left: 3px;
+    padding-right: 3px;
     background-color: $surface1-transparent;
 }
 
@@ -39,7 +39,7 @@ workspace-container {
 
 active-window-icon {
     transition: all 350ms cubic-bezier(0.4, 0, 0.2, 1);
-    -gtk-icon-size: 26px;
+    -gtk-icon-size: 22px;
     margin: 0;
 }
 

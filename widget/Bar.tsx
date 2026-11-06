@@ -79,14 +79,14 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
             application={app}
         >
             <centerbox cssName="bar" vexpand={true}>
-                <box $type="start" spacing={10} vexpand={true} valign={Gtk.Align.CENTER}>
+                <box $type="start" spacing={5} vexpand={true} valign={Gtk.Align.CENTER}>
                     {modulesLeft}
                     {dock}
                 </box>
                 <box $type="center" vexpand={true} valign={Gtk.Align.CENTER}>
                     {modulesCenter}
                 </box>
-                <box $type="end" spacing={10} vexpand={true} valign={Gtk.Align.CENTER}>
+                <box $type="end" spacing={5} vexpand={true} valign={Gtk.Align.CENTER}>
                     {workspaceWidget}
                     {trayWidget}
                     {powerProfileWidget}

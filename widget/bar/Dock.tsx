@@ -35,7 +35,7 @@ export default function Dock() {
 
                     return (
                         <button cssName="dock-item dead" tooltipText={`Missing: ${appName}`}>
-                            <image iconName="image-missing" pixelSize={26} />
+                            <image iconName="image-missing" pixelSize={22} />
                         </button>
                     )
                 }
@@ -48,7 +48,7 @@ export default function Dock() {
                             execAsync("niri msg action close-overview");
                             launch(app);
                         }}>
-                        <image iconName={app.icon_name || "application-x-executable"} pixelSize={26} />
+                        <image iconName={app.icon_name || "application-x-executable"} pixelSize={22} />
                     </button>
                 )
             })}

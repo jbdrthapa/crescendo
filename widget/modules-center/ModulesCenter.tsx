@@ -9,8 +9,8 @@ export function WeatherBarWidget() {
     const weatherService = WeatherService.get_default();
 
     return (
-        <box vexpand={true}>
-            <label valign={Gtk.Align.START} label={createBinding(weatherService, "icon")} cssName="bar-weather-icon" />
+        <box vexpand={true} marginStart={10}>
+            <label valign={Gtk.Align.CENTER} label={createBinding(weatherService, "icon")} cssName="bar-weather-icon" />
             <label valign={Gtk.Align.CENTER} label={createBinding(weatherService, "temperature")} cssName="bar-weather-temperature" />
         </box>
     );
@@ -30,8 +30,8 @@ export function ModulesCenter() {
             }} >
                 <box hexpand={true} halign={Gtk.Align.CENTER} orientation={Gtk.Orientation.HORIZONTAL} spacing={20}>
                     <label label={createBinding(timeService, "time")} valign={Gtk.Align.CENTER} cssName={"bar-time"} />
-                    <box orientation={Gtk.Orientation.VERTICAL}>
-                        <label vexpand={true} valign={Gtk.Align.END} label={createBinding(timeService, "date")} cssName={"bar-date"} />
+                    <box orientation={Gtk.Orientation.HORIZONTAL}>
+                        <label vexpand={true} valign={Gtk.Align.CENTER} label={createBinding(timeService, "date")} cssName={"bar-date"} />
                         {weatherBarWidget}
                     </box>
                 </box>
