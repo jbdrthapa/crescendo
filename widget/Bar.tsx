@@ -14,6 +14,7 @@ import { DesktopMenu } from "./DesktopMenu";
 import { WindowName } from "../constants";
 import Dock from "./bar/Dock";
 import IPCService from "../services/IPCService";
+import IdleService from "../services/IdleService";
 import WidgetManager from "../WidgetManager";
 
 const windowName = WindowName.bar;
@@ -40,6 +41,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
     const graphicsWidget = GraphicsWidget();
     const batteryWidget = BatteryWidget();
     const ipcService = new IPCService();
+    const idleService = new IdleService();
 
     // Invisible backdrop window for click detection
     const backdropButton = (
