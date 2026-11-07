@@ -103,7 +103,7 @@ export function BatteryWidget() {
                 cssName={"battery-bar"}
                 value={percentBinding.as(v => v)}
             />
-            <label label={batteryText} marginStart={5} cssName={"battery-percent"} />
+            <label label={batteryText} marginStart={10} cssName={"battery-percent"} />
         </box>
 
     )

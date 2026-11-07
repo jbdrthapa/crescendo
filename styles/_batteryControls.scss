@@ -19,7 +19,8 @@ battery-percent {
 battery-bar {
     >trough {
         border-radius: $border-radius;
-        border: 2px solid transparent;
+        background-color: $surface0;
+        border: 2px solid $surface2;
     }
 
     >trough block.low {
