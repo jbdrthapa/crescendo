@@ -16,6 +16,7 @@ import Dock from "./bar/Dock";
 import IPCService from "../services/IPCService";
 import IdleService from "../services/IdleService";
 import WidgetManager from "../WidgetManager";
+import { IdleWidget } from "./bar/IdleWidget";
 
 const windowName = WindowName.bar;
 
@@ -39,6 +40,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
     const trayWidget = TrayWidget();
     const powerProfileWidget = PowerProfileWidget();
     const graphicsWidget = GraphicsWidget();
+    const idleWidget = IdleWidget();
     const batteryWidget = BatteryWidget();
     const ipcService = new IPCService();
     const idleService = new IdleService();
@@ -93,6 +95,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
                     {trayWidget}
                     {powerProfileWidget}
                     {graphicsWidget}
+                    {idleWidget}
                     {batteryWidget}
                     {modulesRight}
                 </box>
@@ -124,18 +127,18 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
     // Clicking the bar hides other windows
     const barGesture = new Gtk.GestureClick();
     barGesture.connect("pressed", () => {
-       hide_others();
+        hide_others();
     });
 
     barWindow.add_controller(barGesture);
 
     function hide_others() {
-    app.get_windows().forEach(window => {
-      if (window !== barWindow && window.name !== "bar-background") {
-        window.hide()
-      }
-    });
-  }
+        app.get_windows().forEach(window => {
+            if (window !== barWindow && window.name !== "bar-background") {
+                window.hide()
+            }
+        });
+    }
 
     // Register windows with main app
     app.add_window(backdrop);

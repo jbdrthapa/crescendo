@@ -1,9 +1,18 @@
 import GObject from "gi://GObject";
 import { execAsync } from "ags/process";
+import GLib from "gi://GLib";
 
 const IdleServiceProperties = {
-
+    'is-idle-inhibited': GObject.ParamSpec.boolean(
+        'is-idle-inhibited',
+        'isIdleInhibited',
+        'Is Idle Inhibited By Crescendo Shell',
+        GObject.ParamFlags.READWRITE,
+        false
+    ),
 };
+
+const checkTimer = 1 * 1000;
 
 class InternalIdleService extends GObject.Object {
     static instance: InternalIdleService;
@@ -11,6 +20,8 @@ class InternalIdleService extends GObject.Object {
         if (!this.instance) this.instance = new InternalIdleService();
         return this.instance;
     }
+
+    private is_idle_inhibited = false;
 
     private _lockScreenTimeout = "300";    // 5 minutes in milliseconds
     private _displayPowerTimeout = "600"; // 10 minutes in milliseconds
@@ -24,6 +35,13 @@ class InternalIdleService extends GObject.Object {
     constructor() {
         super();
         this.startIdleProcess();
+
+        this.refreshisIdleInhibited();
+
+        GLib.timeout_add(GLib.PRIORITY_DEFAULT, checkTimer, () => {
+            this.refreshisIdleInhibited();
+            return GLib.SOURCE_CONTINUE;
+        });
     }
 
     private async startIdleProcess() {
@@ -81,12 +99,12 @@ class InternalIdleService extends GObject.Object {
         }
     }
 
-    public async isIdleInhibited() {
+    private async refreshisIdleInhibited() {
         try {
 
             const output = await execAsync(["systemd-inhibit", "--list", "--mode=block"]);
-            return output.includes("crescendo-shell");
-
+            this.is_idle_inhibited = output.includes("crescendo-shell");
+            this.notify("is-idle-inhibited");
         } catch (err) {
 
             console.error("Failed to query systemd-inhibit list:", err);
