@@ -1,0 +1,9 @@
+@use "theme" as *;
+
+.is-idle-inhibited {
+    color: $green;
+}
+
+.is-idle-not-inhibited {
+    color: $overlay2;
+}

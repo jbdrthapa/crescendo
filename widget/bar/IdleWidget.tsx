@@ -26,9 +26,19 @@ export function IdleWidget() {
     }
   });
 
+  const isIdleInhibitedClass = createBinding(idleService, "is_idle_inhibited")((p): string[] => {
+    switch (String(p)) {
+      case "true":
+        return ["is-idle-inhibited"]
+      case "false":
+      default:
+        return ["is-idle-not-inhibited"]
+    }
+  })
+
   return (
     <box cssName="graphics-mode-container">
-      <label label={isIdleInhibited} tooltipText={isIdleInhibitedTooltip} vexpand valign={Gtk.Align.CENTER} />
+      <label label={isIdleInhibited} tooltipText={isIdleInhibitedTooltip} cssClasses={isIdleInhibitedClass} vexpand valign={Gtk.Align.CENTER} />
     </box>
   )
 }
