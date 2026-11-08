@@ -1,5 +1,5 @@
 import GObject from "gi://GObject";
-import { execAsync } from "ags/process";
+import { execAsync, subprocess } from "ags/process";
 import GLib from "gi://GLib";
 
 const IdleServiceProperties = {
@@ -34,6 +34,9 @@ class InternalIdleService extends GObject.Object {
 
     constructor() {
         super();
+
+        this.toggleIdleInhibitor = this.toggleIdleInhibitor.bind(this);
+
         this.startIdleProcess();
 
         this.refreshisIdleInhibited();
@@ -56,47 +59,38 @@ class InternalIdleService extends GObject.Object {
             .catch(err => console.error("swayidle command failed", err));
     }
 
-    public async enableIdleInhibitor() {
-        if (this._inhibitorProcess) {
-            console.warn("Idle inhibitor is already active.");
-            return;
+    public toggleIdleInhibitor() {
+        if (!this._inhibitorProcess) {
+            this.enableIdleInhibitor();
         }
-
-        try {
-            this._inhibitorProcess = await execAsync([
-                "systemd-inhibit",
-                "--what=idle",
-                "--why=crescendo-shell",
-                "sleep", "infinity"
-            ]);
-
-            console.log("Idle inhibitor enabled (swayidle temporarily disabled).");
-        } catch (err) {
-            console.error("Failed to start systemd-inhibit:", err);
-            this._inhibitorProcess = null;
+        else {
+            this.disableIdleInhibitor();
         }
     }
 
-    public disableIdleInhibitor() {
-        if (!this._inhibitorProcess) {
-            console.warn("No active idle inhibitor to disable.");
+    public enableIdleInhibitor() {
+        if (this._inhibitorProcess)
             return;
-        }
 
-        try {
-            this._inhibitorProcess.kill?.() || execAsync(["kill", this._inhibitorProcess.pid.toString()]);
+        this._inhibitorProcess = subprocess([
+            "systemd-inhibit",
+            "--what=idle",
+            "--why=crescendo-shell",
+            "sleep",
+            "infinity",
+        ]);
 
-            console.log("Idle inhibitor disabled (swayidle re-enabled).");
+        console.log("Idle inhibitor enabled");
+    }
 
-        } catch (err) {
+    public disableIdleInhibitor() {
+        if (!this._inhibitorProcess)
+            return;
 
-            console.error("Failed to kill systemd-inhibit process:", err);
+        this._inhibitorProcess.kill();
+        this._inhibitorProcess = null;
 
-        } finally {
-
-            this._inhibitorProcess = null;
-
-        }
+        console.log("Idle inhibitor disabled");
     }
 
     private async refreshisIdleInhibited() {

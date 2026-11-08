@@ -37,8 +37,8 @@ export function IdleWidget() {
   })
 
   return (
-    <box cssName="graphics-mode-container">
+    <button onClicked={idleService.toggleIdleInhibitor} cssName="idle-inhibitor-container">
       <label label={isIdleInhibited} tooltipText={isIdleInhibitedTooltip} cssClasses={isIdleInhibitedClass} vexpand valign={Gtk.Align.CENTER} />
-    </box>
+    </button>
   )
 }
