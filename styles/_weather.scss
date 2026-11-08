@@ -6,9 +6,11 @@ weather-container {
 }
 
 bar-weather-icon {
-  font-size: 12px;
-  color: $overlay1;
+  font-size: 24px;
+  font-weight: 800;
+  color: $sky;
   padding-right: 10px;
+  margin-top: -5px;
 }
 
 bar-weather-temperature {
