@@ -87,8 +87,17 @@ class InternalIdleService extends GObject.Object {
         if (!this._inhibitorProcess)
             return;
 
-        this._inhibitorProcess.kill();
-        this._inhibitorProcess = null;
+        try {
+            subprocess([
+                "pkill",
+                "-f",
+                "systemd-inhibit --what=idle --why=crescendo-shell"
+            ]);
+            this._inhibitorProcess = null;
+            console.log("Idle inhibitor processes cleaned up");
+        } catch (error) {
+            console.error("Failed to clean up stray inhibitors:", error);
+        }
 
         console.log("Idle inhibitor disabled");
     }
