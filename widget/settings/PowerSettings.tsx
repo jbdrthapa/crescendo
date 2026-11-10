@@ -89,20 +89,6 @@ export function PowerSettings() {
 
             <label label="Power Settings" halign={Gtk.Align.START} cssName="section-heading" />
 
-            <box orientation={Gtk.Orientation.HORIZONTAL} visible={chargeLimitSupported} spacing={10}>
-                <label label="Battery charge limit" xalign={0} cssName="settings-param-caption" />
-                <label label={chargeLimitValue.as(v => `${v}%`)} css="min-width: 120px;" cssName="settings-param-value" halign={Gtk.Align.START} />
-                <button onClicked={() => asusBatteryChargeLimitService.setChargeLimit(60)} cssName="settings-param-button">
-                    <label label="60%" />
-                </button>
-                <button onClicked={() => asusBatteryChargeLimitService.setChargeLimit(80)} cssName="settings-param-button">
-                    <label label="80%" />
-                </button>
-                <button onClicked={() => asusBatteryChargeLimitService.setChargeLimit(100)} cssName="settings-param-button">
-                    <label label="100%" />
-                </button>
-            </box>
-
             <box orientation={Gtk.Orientation.HORIZONTAL} spacing={40}>
                 <For each={filteredDevices}>
                     {(device) => {
@@ -205,6 +191,19 @@ export function PowerSettings() {
                                     <label label={percentage} css="font-weight:800; font-size:32px;" />
                                 </box>
 
+                                <box orientation={Gtk.Orientation.HORIZONTAL} visible={chargeLimitSupported} spacing={10}>
+                                    <label label="Charge Limit" xalign={0} cssName="settings-param-caption" />
+                                    <label label={chargeLimitValue.as(v => `${v}%`)} css="min-width: 120px;" cssName="settings-param-value" halign={Gtk.Align.START} />
+                                    <button onClicked={() => asusBatteryChargeLimitService.setChargeLimit(60)} cssName="settings-button">
+                                        <label label="60%" />
+                                    </button>
+                                    <button onClicked={() => asusBatteryChargeLimitService.setChargeLimit(80)} cssName="settings-button">
+                                        <label label="80%" />
+                                    </button>
+                                    <button onClicked={() => asusBatteryChargeLimitService.setChargeLimit(100)} cssName="settings-button">
+                                        <label label="100%" />
+                                    </button>
+                                </box>
 
                                 <box orientation={Gtk.Orientation.HORIZONTAL} visible={hasVendor} spacing={10}>
                                     <label label="Vendor" xalign={0} cssName="settings-param-caption" />
