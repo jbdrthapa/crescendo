@@ -57,4 +57,7 @@ class InternalIPCService extends GObject.Object {
   }
 }
 
-export default GObject.registerClass({ Properties: IPCServiceProperties }, InternalIPCService) as unknown as typeof InternalIPCService;
+export default GObject.registerClass(
+  { Properties: IPCServiceProperties },
+  InternalIPCService
+);

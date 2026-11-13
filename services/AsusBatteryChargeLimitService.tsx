@@ -99,4 +99,9 @@ class InternalAsusBatteryChargeLimitService extends GObject.Object {
   }
 }
 
-export default GObject.registerClass({ Properties: AsusBatteryChargeLimitServiceProperties }, InternalAsusBatteryChargeLimitService) as unknown as typeof InternalAsusBatteryChargeLimitService;
+const AsusBatteryChargeLimitService = GObject.registerClass(
+  { Properties: AsusBatteryChargeLimitServiceProperties },
+  InternalAsusBatteryChargeLimitService
+);
+
+export default AsusBatteryChargeLimitService;
