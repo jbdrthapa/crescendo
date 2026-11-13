@@ -49,10 +49,11 @@ class InternalIdleService extends GObject.Object {
 
     private async startIdleProcess() {
         try {
-            await execAsync(["pkill", "swayidle"]);
-        }
-        catch (err) {
-            console.error("failed to kill swayidle process.")
+            await execAsync(["bash", "-lc", "pkill -x swayidle || true"]);
+            const remains = await execAsync(["bash", "-lc", "pgrep -x swayidle >/dev/null && echo running || echo stopped"]);
+            console.log(`swayidle status: ${remains.trim()}`);
+        } catch (err) {
+            console.error("Failed to stop swayidle:", err);
         }
 
         execAsync(["swayidle", "-w", "timeout", this._lockScreenTimeout, this._lockScreenCommand, "timeout", this._displayPowerTimeout, this._displayPowerOffCommand, "resume", this._displayPowerOnCommand, "before-sleep", this._lockScreenCommand])
