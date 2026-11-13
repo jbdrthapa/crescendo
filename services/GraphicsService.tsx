@@ -30,7 +30,7 @@ class InternalGraphicsService extends GObject.Object {
     }
 
     private dgpu_in_use = false;
-    private dgpu_mode = "?";
+    private dgpu_mode = "";
 
     constructor() {
         super();
@@ -77,11 +77,10 @@ class InternalGraphicsService extends GObject.Object {
                 }
             }
         } catch (e) {
-            print("Failed to read discrete gpu power status", e);
+            this.dgpu_in_use = false;
+            this.notify("dgpu-in-use");
         }
     }
 }
 
-const GraphicsService = GObject.registerClass({ Properties: GraphicsServiceProperties, }, InternalGraphicsService);
-
-export default GraphicsService;
+export default GObject.registerClass({ Properties: GraphicsServiceProperties }, InternalGraphicsService) as unknown as typeof InternalGraphicsService;

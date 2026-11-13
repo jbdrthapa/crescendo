@@ -4,30 +4,30 @@ power-profile-button {
     background-color: $base-transparent;
     border-radius: $border-radius-circle;
     border: 2px solid $surface2;
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 12px;
+    padding-right: 12px;
 }
 
 .power-profile-power-saver {
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 600;
     color: $green;
 }
 
 .power-profile-balanced {
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 600;
     color: $subtext1;
 }
 
 .power-profile-performance {
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 600;
     color: $red;
 }
 
 .power-profile-unknown {
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 600;
     color: $red;
 }

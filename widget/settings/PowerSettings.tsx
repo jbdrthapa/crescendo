@@ -2,12 +2,16 @@ import Gtk from "gi://Gtk?version=4.0";
 import { For, createBinding, createComputed } from "gnim";
 import AstalBattery from "gi://AstalBattery?version=0.1";
 import Utils from "../../Utils";
+import AsusBatteryChargeLimitService from "../../services/AsusBatteryChargeLimitService";
 
 export function PowerSettings() {
 
     const upower = new AstalBattery.UPower();
+    const asusBatteryChargeLimitService = AsusBatteryChargeLimitService.get_default();
 
     const devicesBinding = createComputed(() => upower.devices || []);
+    const chargeLimitValue = createBinding(asusBatteryChargeLimitService, "charge_limit");
+    const chargeLimitSupported = createBinding(asusBatteryChargeLimitService, "is_supported");
 
     const CONFIG_DIR = `${Utils.GetUserConfigDirectory()}/crescendo`;
 
@@ -187,6 +191,19 @@ export function PowerSettings() {
                                     <label label={percentage} css="font-weight:800; font-size:32px;" />
                                 </box>
 
+                                <box orientation={Gtk.Orientation.HORIZONTAL} visible={chargeLimitSupported} spacing={10}>
+                                    <label label="Charge Limit" xalign={0} cssName="settings-param-caption" />
+                                    <label label={chargeLimitValue.as(v => `${v}%`)} css="min-width: 120px;" cssName="settings-param-value" halign={Gtk.Align.START} />
+                                    <button onClicked={() => asusBatteryChargeLimitService.setChargeLimit(60)} cssName="settings-button">
+                                        <label label="60%" />
+                                    </button>
+                                    <button onClicked={() => asusBatteryChargeLimitService.setChargeLimit(80)} cssName="settings-button">
+                                        <label label="80%" />
+                                    </button>
+                                    <button onClicked={() => asusBatteryChargeLimitService.setChargeLimit(100)} cssName="settings-button">
+                                        <label label="100%" />
+                                    </button>
+                                </box>
 
                                 <box orientation={Gtk.Orientation.HORIZONTAL} visible={hasVendor} spacing={10}>
                                     <label label="Vendor" xalign={0} cssName="settings-param-caption" />

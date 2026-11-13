@@ -34,7 +34,7 @@ export function ModulesRight() {
         name: windowName,
         namespace: windowName,
         anchor: Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT,
-        margin: 8,
+        margin: 2,
         application: app,
         child: (
             <box

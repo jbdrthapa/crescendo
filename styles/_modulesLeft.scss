@@ -24,7 +24,7 @@ search-entry {
   background-color: $crust-transparent;
   color: $accent-background;
   padding-left: 20px;
-  border-radius: $border-radius-circle;
+  border-radius: $border-radius;
   border: 2px solid $surface1;
   margin-bottom: 30px;
   font-size: 16px;
@@ -33,21 +33,20 @@ search-entry {
 }
 
 search-entry:hover {
-  background-color: $accent-background-translucent;
-  border-color: $accent-background;
+  background-color: $surface0;
+  border-color: $surface2;
 }
 
 app-button {
   background: none;
   border: 2px solid transparent;
   min-width: 1060px;
-  padding-left: 10px;
 }
 
 app-button-highlight {
-  background-color: $accent-background-translucent;
-  border: 2px solid $accent-background;
-  border-radius: $border-radius-circle;
+  background-color: $surface1;
+  border: 2px dashed $surface2;
+  border-radius: $border-radius;
 }
 
 app-button:hover {
@@ -76,6 +75,7 @@ app-button:focus app-desc {
 
 app-name {
   color: $subtext1;
+  font-variant-caps: all-petite-caps;
   font-size: 18px;
   font-weight: 700;
 }
