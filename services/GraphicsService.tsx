@@ -83,6 +83,4 @@ class InternalGraphicsService extends GObject.Object {
     }
 }
 
-const GraphicsService = GObject.registerClass({ Properties: GraphicsServiceProperties, }, InternalGraphicsService);
-
-export default GraphicsService;
+export default GObject.registerClass({ Properties: GraphicsServiceProperties }, InternalGraphicsService) as unknown as typeof InternalGraphicsService;

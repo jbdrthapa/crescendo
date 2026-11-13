@@ -170,7 +170,4 @@ class InternalTimeService extends GObject.Object {
 
 }
 
-
-const TimeService = GObject.registerClass({ Properties: TimeServiceProperties, }, InternalTimeService);
-
-export default TimeService;
+export default GObject.registerClass({ Properties: TimeServiceProperties }, InternalTimeService) as unknown as typeof InternalTimeService;

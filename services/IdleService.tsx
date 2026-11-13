@@ -21,7 +21,7 @@ class InternalIdleService extends GObject.Object {
         return this.instance;
     }
 
-    private is_idle_inhibited = false;
+    public is_idle_inhibited = false;
 
     private _lockScreenTimeout = "300";    // 5 minutes in milliseconds
     private _displayPowerTimeout = "600"; // 10 minutes in milliseconds
@@ -118,6 +118,6 @@ class InternalIdleService extends GObject.Object {
 
 }
 
-const IdleService = GObject.registerClass({ Properties: IdleServiceProperties, }, InternalIdleService);
+const IdleService = GObject.registerClass({ Properties: IdleServiceProperties }, InternalIdleService) as unknown as typeof InternalIdleService;
 
 export default IdleService;
