@@ -223,6 +223,4 @@ class InternalWeatherService extends GObject.Object {
     }
 }
 
-const WeatherService = GObject.registerClass({ Properties: WeatherServiceProperties, }, InternalWeatherService);
-
-export default WeatherService;
+export default GObject.registerClass({ Properties: WeatherServiceProperties }, InternalWeatherService) as unknown as typeof InternalWeatherService;
