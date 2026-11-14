@@ -53,6 +53,11 @@ export function WiredNetworkWidget(controller: AccordionController) {
 
     const device = createBinding(wired, "device");
 
+    if(!device()) {
+        detail = "Unavailable"
+        return;
+    }
+
     const iconName = createBinding(wired, "iconName");
 
     const deviceInterface = createComputed(() => {
