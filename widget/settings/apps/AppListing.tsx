@@ -2,22 +2,22 @@ import Gtk from "gi://Gtk?version=4.0";
 import Apps from "gi://AstalApps";
 import { Gdk } from "ags/gtk4";
 import { For, createState } from "ags";
-import { execAsync, subprocess } from "ags/process";
+import { subprocess } from "ags/process";
+import Utils from "../../../Utils";
 
-const terminal = "kitty";
+const terminal = Utils.GetTerminal();
 let cached: Gtk.Widget | null = null;
 
 function launch(app?: Apps.Application) {
     if (!app) return;
 
-    // Close the compositor overview
-    execAsync("niri msg action close-overview");
+    Utils.CloseOverview();
 
     const needsTerminal = app.get_key("Terminal") === "true";
 
     if (needsTerminal) {
         const cmd = `${terminal} -e ${app.executable}`;
-        subprocess(["bash", "-c", `${cmd} >/dev/null 2>&1 &`]);
+        subprocess(["bash", "-lc", `${cmd} >/dev/null 2>&1 &`]);
     } else {
         app.launch();
     }
@@ -103,7 +103,9 @@ export function AppListing() {
         if (mod === Gdk.ModifierType.ALT_MASK) {
             const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
             for (const n of nums) {
-                if (keyval === Gdk[`KEY_${n}`]) {
+                const gdkKeys = Gdk as unknown as Record<string, number>;
+                const keyCode = gdkKeys[`KEY_${n}`];
+                if (keyval === keyCode) {
                     launch(list.peek()[n - 1]);
                     return true;
                 }
