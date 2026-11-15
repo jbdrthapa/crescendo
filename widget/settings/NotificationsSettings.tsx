@@ -82,11 +82,7 @@ export function NotificationsSettings() {
 
   const container = new Gtk.Box({
     orientation: Gtk.Orientation.VERTICAL,
-    spacing: 12,
-    marginTop: 18,
-    marginBottom: 18,
-    marginStart: 18,
-    marginEnd: 18,
+    spacing: 10,
     hexpand: true,
     vexpand: true,
   });
@@ -105,7 +101,7 @@ export function NotificationsSettings() {
   });
 
   const clearButton = new Gtk.Button({
-    label: "Clear all",
+    label: "Clear",
     cssName: "settings-button",
   });
 

@@ -11,9 +11,16 @@ export function GetSettingsWindow() {
   return settingsInstance;
 }
 
-export function GetLockScreenWindow() {
+export function InitializeLockScreenWindow() {
   if (!lockScreenInstance) {
     lockScreenInstance = LockScreen();
+  }
+  return lockScreenInstance;
+}
+
+export function GetLockScreenWindow() {
+  if (!lockScreenInstance) {
+    throw new Error("Lock screen window has not been initialized yet.");
   }
   return lockScreenInstance;
 }
@@ -28,6 +35,7 @@ export function DisposeSettingsWindow() {
 const WidgetManager = {
   GetSettingsWindow,
   GetLockScreenWindow,
+  InitializeLockScreenWindow,
   DisposeSettingsWindow,
 };
 
