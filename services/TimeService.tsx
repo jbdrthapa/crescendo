@@ -11,7 +11,6 @@ const TimeServiceProperties = {
 
 const delay = (ms: number) => new Promise(resolve => GLib.timeout_add(GLib.PRIORITY_DEFAULT, ms, () => { resolve(null); return GLib.SOURCE_REMOVE; }));
 const retryAttempts = 5;
-const updateTimeTimer = 60 * 1000;
 const updateTimezoneTimer = 20 * 60 * 1000;
 
 class InternalTimeService extends GObject.Object {
@@ -30,15 +29,22 @@ class InternalTimeService extends GObject.Object {
         super();
         this.UpdateTimezone();
         this.RefreshTime();
-
-        this.timers.repeat(updateTimeTimer, () => {
-            this.RefreshTime();
-            return true;
-        });
+        this.ScheduleNextRefresh();
 
         this.timers.repeat(updateTimezoneTimer, () => {
             void this.UpdateTimezone();
             return true;
+        });
+    }
+
+    private ScheduleNextRefresh(): void {
+        const now = GLib.DateTime.new_now_local();
+        const millisecondsUntilNextMinute =
+            (60 - now.get_second()) * 1000 - Math.floor(now.get_microsecond() / 1000);
+
+        this.timers.once(Math.max(1, millisecondsUntilNextMinute), () => {
+            this.RefreshTime();
+            this.ScheduleNextRefresh();
         });
     }
 

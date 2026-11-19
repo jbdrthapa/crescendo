@@ -13,7 +13,7 @@ const IdleServiceProperties = {
     ),
 };
 
-const checkTimer = 10 * 1000;
+const checkTimer = 3 * 1000;
 
 class InternalIdleService extends GObject.Object {
     static instance: InternalIdleService;
