@@ -4,15 +4,22 @@ bar {
   font-family: "Inter", "JetBrainsMono Nerd Font Propo", "Noto Sans CJK JP", "Noto Sans CJK KR";
   font-size: 18px;
   color: $subtext1;
-  margin: 1px;
+  background-color: $crust-transparent;
+  margin: 0px;
+  min-width: 52px;
+  padding: 5px 3px;
+}
+
+bar-start,
+bar-end,
+bar-center {
+  min-width: 46px;
 }
 
 graphics-mode-container {
-  background-color: $base-transparent;
+  background-color: $crust-transparent;
   border-radius: $border-radius-circle;
-  border: 2px solid $surface2;
-  padding-left: 12px;
-  padding-right: 12px;
+  border: 2px solid $surface1;
 }
 
 .discrete-graphics-icon {

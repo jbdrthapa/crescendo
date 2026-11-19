@@ -19,45 +19,36 @@ export function WorkspaceWidget() {
   const focused = createBinding(niri, "focused_window")
 
   return (
-    <box spacing={10} cssName="workspace-container" orientation={Gtk.Orientation.HORIZONTAL}>
+    <box spacing={6} cssName="workspace-container" orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER}>
       <button
-        vexpand={true}
-        valign={Gtk.Align.CENTER}
         cssClasses={["dock-button", "close"]}
-        onClicked={() => {
-          execAsync("niri msg action close-window")
-        }}
-        tooltipText={"Close Active"}>
+        onClicked={() => execAsync("niri msg action close-window")}
+        tooltipText={"Close Active"}
+      >
         <label label="󰛉" />
       </button>
+
       <image
         visible={focused.as(win => !!win)}
         icon-name={focused.as(win => win?.app_id || "image-missing")}
         cssName="active-window-icon"
-        tooltipText={focused.as(win => {
-          if (!win || !win.title) return "";
-          return win.title;
-        })}
+        tooltipText={focused.as(win => win?.title || "")}
       />
 
       <button
-        valign={Gtk.Align.CENTER}
         cssClasses={["workspace-item", "focus"]}
-        onClicked={() => {
-          execAsync("niri msg action focus-column-left")
-        }}
-        tooltipText={"Focus Left"}
+        onClicked={() => execAsync("niri msg action focus-window-up")}
+        tooltipText={"Focus Up"}
       >
-        <label label="" />
+        <label label="" />
       </button>
 
-      <box spacing={7}>
-
+      <box spacing={5} orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER}>
         <For each={workspaces}>
           {(ws: NiriWorkspace) => (
-            <button valign={Gtk.Align.CENTER}
-              cssClasses={createBinding(niri, "focused_workspace").as(focused => {
-                const isFocused = focused?.id === ws.id;
+            <button
+              cssClasses={createBinding(niri, "focused_workspace").as(focusedWorkspace => {
+                const isFocused = focusedWorkspace?.id === ws.id;
                 return isFocused ? ["workspace-item", "focused"] : ["workspace-item"];
               })}
               onClicked={() => ws.focus()}
@@ -67,17 +58,14 @@ export function WorkspaceWidget() {
           )}
         </For>
       </box>
-      <button
-        valign={Gtk.Align.CENTER}
-        cssClasses={["workspace-item", "focus"]}
-        onClicked={() => {
-          execAsync("niri msg action focus-column-right")
-        }}
-        tooltipText={"Focus Right"}
-      >
-        <label label="" />
-      </button>
 
+      <button
+        cssClasses={["workspace-item", "focus"]}
+        onClicked={() => execAsync("niri msg action focus-window-down")}
+        tooltipText={"Focus Down"}
+      >
+        <label label="" />
+      </button>
     </box>
   )
 }

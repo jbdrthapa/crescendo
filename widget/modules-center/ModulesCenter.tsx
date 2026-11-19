@@ -9,9 +9,9 @@ export function WeatherBarWidget() {
     const weatherService = WeatherService.get_default();
 
     return (
-        <box vexpand={true} marginStart={10}>
-            <label valign={Gtk.Align.CENTER} label={createBinding(weatherService, "icon")} cssName="bar-weather-icon" />
-            <label valign={Gtk.Align.CENTER} label={createBinding(weatherService, "temperature")} cssName="bar-weather-temperature" />
+        <box orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER}>
+            <label halign={Gtk.Align.CENTER} label={createBinding(weatherService, "icon")} cssName="bar-weather-icon" />
+            <label halign={Gtk.Align.CENTER} label={createBinding(weatherService, "temperature")} cssName="bar-weather-temperature" />
         </box>
     );
 }
@@ -20,20 +20,21 @@ export function ModulesCenter() {
 
     const weatherBarWidget = WeatherBarWidget();
     const timeService = TimeService.get_default();
+    const time = createBinding(timeService, "time");
+    const hour = time.as(value => value?.split(":")[0] || "");
+    const minute = time.as(value => value?.split(":")[1] || "");
 
     const button = (
-        <box hexpand={false} cssName={"date-time-weather-container"}>
+        <box hexpand={false} halign={Gtk.Align.CENTER} cssName={"date-time-weather-container"}>
             <button onClicked={() => {
                 let settings = WidgetManager.GetSettingsWindow();
                 settings?.Today();
                 settings?.toggle();
             }} >
-                <box hexpand={true} halign={Gtk.Align.CENTER} orientation={Gtk.Orientation.HORIZONTAL} spacing={20}>
-                    <label label={createBinding(timeService, "time")} valign={Gtk.Align.CENTER} cssName={"bar-time"} />
-                    <box orientation={Gtk.Orientation.HORIZONTAL}>
-                        <label vexpand={true} valign={Gtk.Align.CENTER} label={createBinding(timeService, "date")} cssName={"bar-date"} />
-                        {weatherBarWidget}
-                    </box>
+                <box halign={Gtk.Align.CENTER} orientation={Gtk.Orientation.VERTICAL} spacing={4}>
+                    <label label={hour} halign={Gtk.Align.CENTER} cssName={"bar-hour"} />
+                    <label label={minute} halign={Gtk.Align.CENTER} cssName={"bar-minute"} />
+                    {weatherBarWidget}
                 </box>
             </button>
         </box>

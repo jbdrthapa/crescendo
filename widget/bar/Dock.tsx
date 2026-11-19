@@ -2,6 +2,7 @@ import Apps from "gi://AstalApps"
 import { subprocess } from "ags/process";
 import Config from "../../conf/Config";
 import Utils from "../../Utils";
+import Gtk from "gi://Gtk?version=4.0"
 
 const terminal = Utils.GetTerminal();
 
@@ -26,7 +27,7 @@ function launch(app?: Apps.Application) {
 
 export default function Dock() {
     return (
-        <box cssName="dock-window">
+        <box cssName="dock-window" orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER} spacing={4}>
             {DOCK_LAUNCHERS.map(appName => {
                 const app: Apps.Application = appsService.fuzzy_query(appName)?.[0]
                     || appsService.get_list().find(a => a.name.toLowerCase().includes(appName.toLowerCase()))

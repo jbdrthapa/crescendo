@@ -1,11 +1,9 @@
 @use "theme" as *;
 
 power-profile-button {
-    background-color: $base-transparent;
+    background-color: $crust-transparent;
     border-radius: $border-radius-circle;
-    border: 2px solid $surface2;
-    padding-left: 12px;
-    padding-right: 12px;
+    border: 2px solid $surface1;
 }
 
 .power-profile-power-saver {

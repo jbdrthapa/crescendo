@@ -33,7 +33,7 @@ export function ModulesRight() {
     ModulesRightPopup = new PopupWindow({
         name: windowName,
         namespace: windowName,
-        anchor: Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT,
+        anchor: Astal.WindowAnchor.TOP | Astal.WindowAnchor.LEFT,
         margin: 2,
         application: app,
         child: (

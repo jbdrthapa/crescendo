@@ -23,7 +23,12 @@ export function TrayWidget() {
   }
 
   return (
-    <box cssName="tray-module-container">
+    <box
+      cssName="tray-module-container"
+      orientation={Gtk.Orientation.VERTICAL}
+      halign={Gtk.Align.CENTER}
+      spacing={4}
+    >
       <For each={items}>
         {(item) => (
           <button $={(self) => init(self, item)} cssName="tray-module-button">

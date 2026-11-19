@@ -27,7 +27,7 @@ function CloseAllMenus(settings: any, modulesRight: any, desktopMenu: any) {
 }
 
 export default function Bar(gdkmonitor: Gdk.Monitor) {
-    const { TOP, LEFT, RIGHT } = Astal.WindowAnchor;
+    const { TOP, BOTTOM, LEFT } = Astal.WindowAnchor;
 
     // Create ALL widgets INSIDE Bar() — never at module top-level
     const modulesLeft = new ModulesLeft();
@@ -79,27 +79,28 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
             gdkmonitor={gdkmonitor}
             exclusivity={Astal.Exclusivity.EXCLUSIVE}
             layer={Astal.Layer.TOP}
-            anchor={TOP | LEFT | RIGHT}
+            anchor={TOP | LEFT | BOTTOM}
             application={app}
         >
-            <centerbox cssName="bar" vexpand={true}>
-                <box $type="start" spacing={5} vexpand={true} valign={Gtk.Align.CENTER}>
+            <box cssName="bar" orientation={Gtk.Orientation.VERTICAL} vexpand={true} hexpand={false} spacing={6}>
+                <box cssName="bar-start" orientation={Gtk.Orientation.VERTICAL} spacing={6} halign={Gtk.Align.CENTER} valign={Gtk.Align.START}>
+                    {modulesRight}
                     {modulesLeft}
+                    {workspaceWidget}
                     {dock}
                 </box>
-                <box $type="center" vexpand={true} valign={Gtk.Align.CENTER}>
-                    {modulesCenter}
+                <box cssName="bar-center" orientation={Gtk.Orientation.VERTICAL} vexpand={true} valign={Gtk.Align.CENTER} halign={Gtk.Align.CENTER}>
+                    
                 </box>
-                <box $type="end" spacing={5} vexpand={true} valign={Gtk.Align.CENTER}>
-                    {workspaceWidget}
+                <box cssName="bar-end" orientation={Gtk.Orientation.VERTICAL} spacing={6} halign={Gtk.Align.CENTER} valign={Gtk.Align.END}>
                     {trayWidget}
                     {powerProfileWidget}
                     {graphicsWidget}
                     {idleWidget}
                     {batteryWidget}
-                    {modulesRight}
+                    {modulesCenter}
                 </box>
-            </centerbox>
+            </box>
         </window>
 
     ) as Astal.Window;

@@ -11,10 +11,12 @@ modules-center-container {
 date-time-weather-container {
   background-color: $base-transparent;
   border-radius: $border-radius-circle;
-  border: 2px solid $surface2;
-  padding-left: 15px;
-  padding-right: 15px;
-  min-width: 200px;
+  border: 2px solid $surface1;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 4px;
+  padding-right: 4px;
+
 }
 
 date-time-weather-container button {
@@ -23,18 +25,27 @@ date-time-weather-container button {
   padding: 0px;
 }
 
-bar-time {
+bar-hour,
+bar-minute {
   font-weight: 600;
   color: $subtext1;
-  font-size: 26px;
+  font-size: 24px;
   letter-spacing: -1px;
+}
+
+bar-minute {
+  color: $accent-background;
 }
 
 bar-date {
   font-weight: 800;
-  font-size: 18px;
+  font-size: 14px;
   font-variant-caps: all-petite-caps;
   color: $subtext1;
+  transform: rotate(90deg);
+  min-width: 90px;
+  min-height: 24px;
+  margin: 32px 0;
 }
 
 time-container {

@@ -44,8 +44,8 @@ export function Settings() {
     const SettingsPopup = new PopupWindow({
         name: windowName,
         namespace: windowName,
-        anchor: Astal.WindowAnchor.TOP,
-        exclusivity: Astal.Exclusivity.IGNORE,
+        anchor: Astal.WindowAnchor.TOP|Astal.WindowAnchor.LEFT,
+        exclusivity: Astal.Exclusivity.EXCLUSIVE,
         application: app,
         child: (
             <box cssName="settings-container">

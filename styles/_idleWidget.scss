@@ -1,12 +1,9 @@
 @use "theme" as *;
 
 idle-inhibitor-container {
-  background-color: $base-transparent;
+  background-color: $crust-transparent;
   border-radius: $border-radius-circle;
-  border: 2px solid $surface2;
-  padding-left: 12px;
-  padding-right: 12px;
-  min-width: 20px;
+  border: 2px solid $surface1;
 }
 
 .is-idle-inhibited {
