@@ -3,7 +3,7 @@
 idle-inhibitor-container {
   background-color: $crust-transparent;
   border-radius: $border-radius-circle;
-  border: 2px solid $surface1;
+  border: 1px dashed $surface1;
 }
 
 .is-idle-inhibited {

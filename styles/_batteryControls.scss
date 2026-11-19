@@ -3,7 +3,7 @@
 battery-container {
     background-color: $base-transparent;
     border-radius: $border-radius-circle;
-    border: 2px solid $surface1;
+    border: 1px dashed $surface1;
 }
 
 battery-percent {
@@ -20,7 +20,7 @@ battery-bar {
     >trough {
         border-radius: $border-radius;
         background-color: $surface0;
-        border: 2px solid $surface2;
+        border: 1px dashed $surface2;
     }
 
     >trough block.low {

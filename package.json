@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "check": "tsc --noEmit",
+    "bundle": "ags bundle app.ts crescendo"
+  },
   "dependencies": {
     "ags": "*",
     "gnim": "*"
