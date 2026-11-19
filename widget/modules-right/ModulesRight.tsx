@@ -12,8 +12,6 @@ import { WindowName } from "../../constants";
 
 const windowName = WindowName.modulesRight;
 
-let ModulesRightPopup: any;
-
 export function ModulesRight() {
     const systemInfoWidget = SystemInfoWidget();
     const pillWidgets = PillWidgets();
@@ -21,16 +19,7 @@ export function ModulesRight() {
     const audioControlsWidget = AudioControlsWidget();
     const powerButtonsWidget = PowerButtonsWidget();
 
-    const button = (
-        <button
-            onClicked={() => ModulesRightPopup.toggle()}
-            cssName={"bar-module-button"}
-        >
-            <label label={"󰣇"} />
-        </button>
-    ) as any;
-
-    ModulesRightPopup = new PopupWindow({
+    const popup = new PopupWindow({
         name: windowName,
         namespace: windowName,
         anchor: Astal.WindowAnchor.TOP | Astal.WindowAnchor.LEFT,
@@ -74,13 +63,22 @@ export function ModulesRight() {
         ),
     });
 
-    ModulesRightPopup.connect("notify::visible", () => {
-        if (ModulesRightPopup.visible) {
-            // reset UI if needed
+    popup.connect("notify::visible", () => {
+        if (popup.visible) {
+            // Reserved for future popup state synchronization.
         }
     });
 
-    button.popup = ModulesRightPopup;
+    const button = (
+        <button
+            onClicked={() => popup.toggle()}
+            cssName="bar-module-button"
+        >
+            <label label="󰣇" />
+        </button>
+    ) as Gtk.Button & { popup: InstanceType<typeof PopupWindow> };
+
+    button.popup = popup;
 
     return button;
 }

@@ -5,24 +5,15 @@ import app from "ags/gtk4/app";
 import { WindowName } from "../constants";
 import WidgetManager from "../WidgetManager";
 
-interface SettingsWindow extends PopupWindow {
-    Settings: () => void;
-    Today: () => void;
-    Apps: () => void;
-    Wallpaper: () => void;
-    Power: () => void;
-    toggle: () => void;
-}
-
 const windowName = WindowName.desktopMenu;
 
-function ShowSettings(action: (() => void) | undefined, settings: SettingsWindow | null) {
+function showSettings(action: (() => void) | undefined, settings = WidgetManager.GetSettingsWindow()) {
     action?.();
-    settings?.toggle();
+    settings.toggle();
 }
 
 export function DesktopMenu() {
-    const settings = WidgetManager.GetSettingsWindow() as SettingsWindow | null;
+    const settings = WidgetManager.GetSettingsWindow();
 
     return new PopupWindow({
         name: windowName,
@@ -33,28 +24,25 @@ export function DesktopMenu() {
             <box orientation={Gtk.Orientation.VERTICAL}>
                 <button
                     cssName="desktop-menu-button"
-                    onClicked={() => ShowSettings(settings?.Apps, settings)}
+                    onClicked={() => showSettings(settings.Apps, settings)}
                 >
                     Apps
                 </button>
-
                 <button
                     cssName="desktop-menu-button"
-                    onClicked={() => ShowSettings(settings?.Wallpaper, settings)}
+                    onClicked={() => showSettings(settings.Wallpaper, settings)}
                 >
                     Wallpaper
                 </button>
-
                 <button
                     cssName="desktop-menu-button"
-                    onClicked={() => ShowSettings(settings?.Power, settings)}
+                    onClicked={() => showSettings(settings.Power, settings)}
                 >
                     Power
                 </button>
-
                 <button
                     cssName="desktop-menu-button"
-                    onClicked={() => ShowSettings(settings?.Settings, settings)}
+                    onClicked={() => showSettings(settings.Settings, settings)}
                 >
                     Settings
                 </button>

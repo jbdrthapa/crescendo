@@ -1,10 +1,10 @@
-import { Settings } from "./widget/settings/Settings";
+import { Settings, SettingsWindow } from "./widget/settings/Settings";
 import { LockScreen } from "./widget/LockScreen";
 
-let settingsInstance: ReturnType<typeof Settings> | null = null;
+let settingsInstance: SettingsWindow | null = null;
 let lockScreenInstance: ReturnType<typeof LockScreen> | null = null;
 
-export function GetSettingsWindow() {
+export function GetSettingsWindow(): SettingsWindow {
   if (!settingsInstance) {
     settingsInstance = Settings();
   }

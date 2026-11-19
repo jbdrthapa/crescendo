@@ -1,9 +1,23 @@
 import GLib from 'gi://GLib';
 import Gio from "gi://Gio";
 
-let cachedConfig: any = null;
+export interface CrescendoConfig {
+    open_weather_api_key: string;
+    open_weather_city_code: string;
+    measurement_units: string;
+    dock_launchers: string[];
+}
+
+const defaultConfig: CrescendoConfig = {
+    open_weather_api_key: "",
+    open_weather_city_code: "",
+    measurement_units: "metric",
+    dock_launchers: [],
+};
+
+let cachedConfig: CrescendoConfig | null = null;
 let monitor: Gio.FileMonitor | null = null;
-let configPath = GLib.build_filenamev([
+const configPath = GLib.build_filenamev([
     GLib.get_home_dir(),
     ".config",
     "crescendo",
@@ -11,124 +25,91 @@ let configPath = GLib.build_filenamev([
     "crescendo.json",
 ]);
 
-function loadConfig() {
+function loadConfig(): void {
     const [ok, bytes] = GLib.file_get_contents(configPath);
     if (!ok) {
-        cachedConfig = null;
+        cachedConfig = { ...defaultConfig, dock_launchers: [] };
         return;
     }
 
     try {
-        cachedConfig = JSON.parse(new TextDecoder().decode(bytes));
-    } catch (e) {
-        print(`crescendo config parse error: ${e}`);
-        cachedConfig = null;
+        const parsed = JSON.parse(new TextDecoder().decode(bytes)) as Partial<CrescendoConfig>;
+        cachedConfig = {
+            open_weather_api_key:
+                typeof parsed.open_weather_api_key === "string" ? parsed.open_weather_api_key : defaultConfig.open_weather_api_key,
+            open_weather_city_code:
+                typeof parsed.open_weather_city_code === "string" ? parsed.open_weather_city_code : defaultConfig.open_weather_city_code,
+            measurement_units:
+                typeof parsed.measurement_units === "string" ? parsed.measurement_units : defaultConfig.measurement_units,
+            dock_launchers:
+                Array.isArray(parsed.dock_launchers) ? parsed.dock_launchers.filter((launcher): launcher is string => typeof launcher === "string") : [],
+        };
+    } catch (error) {
+        print(`crescendo config parse error: ${error}`);
+        cachedConfig = { ...defaultConfig, dock_launchers: [] };
     }
 }
 
-function reloadConfig() {
+function reloadConfig(): CrescendoConfig | null {
     loadConfig();
-
-    if (!cachedConfig) {
-        console.log("Unable to read config.")
-
-    }
-
     return cachedConfig;
 }
 
-function saveConfig() {
-
-    if (!cachedConfig) {
-        console.log("No configuration to save.");
-        return false;
-    }
+function saveConfig(): boolean {
+    if (!cachedConfig) return false;
 
     try {
-        console.log("stringify called");
         const jsonString = JSON.stringify(cachedConfig, null, 4);
         const bytes = new TextEncoder().encode(jsonString);
         const ok = GLib.file_set_contents(configPath, bytes);
-
-        console.log("calling SetMeasurementUnits later on");
-
-        if (!ok) {
-            console.log(`Error: GLib failed to write to ${configPath}`);
-            return false;
-        }
-
-        console.log("Configuration saved successfully.");
-        return true;
-
-    } catch (e) {
-        console.log(`crescendo config save error: ${e}`);
+        return ok;
+    } catch (error) {
+        print(`crescendo config save error: ${error}`);
         return false;
     }
 }
 
-
-function setupWatcher() {
+function setupWatcher(): void {
     const file = Gio.File.new_for_path(configPath);
 
     monitor = file.monitor_file(Gio.FileMonitorFlags.NONE, null);
 
     monitor.connect("changed", (_monitor, _file, _otherFile, eventType) => {
-        // Only reload on actual content change
         if (eventType === Gio.FileMonitorEvent.CHANGES_DONE_HINT ||
             eventType === Gio.FileMonitorEvent.CHANGED ||
             eventType === Gio.FileMonitorEvent.CREATED) {
-
-            print("crescendo.json changed, reloading...");
             loadConfig();
         }
     });
 }
 
-// Setup file monitor
 setupWatcher();
-
-// Load config in the beginning
 loadConfig();
 
-
-// Export functions
-
-export function GetOpenWeatherAPIKey() {
-    if (!cachedConfig) return "";
-    return cachedConfig.open_weather_api_key;
+export function GetOpenWeatherAPIKey(): string {
+    return cachedConfig?.open_weather_api_key ?? "";
 }
 
-export function GetOpenWeatherCityCode() {
-    if (!cachedConfig) return "";
-    return cachedConfig.open_weather_city_code;
+export function GetOpenWeatherCityCode(): string {
+    return cachedConfig?.open_weather_city_code ?? "";
 }
 
-export function GetMeasurementUnits() {
-    if (!cachedConfig) return "";
-    return cachedConfig.measurement_units;
+export function GetMeasurementUnits(): string {
+    return cachedConfig?.measurement_units ?? defaultConfig.measurement_units;
 }
 
-export function GetDockLaunchers() {
-    if (!cachedConfig) return [];
-    return Array.isArray(cachedConfig.dock_launchers)
-        ? cachedConfig.dock_launchers
-        : [];
+export function GetDockLaunchers(): string[] {
+    return cachedConfig?.dock_launchers ?? [];
 }
 
-export function SetMeasurementUnits(measurement_units: string) {
-    console.log("calling SetMeasurementUnits");
+export function SetMeasurementUnits(measurementUnits: string): void {
     if (!reloadConfig()) return;
 
-    console.log("reload config passed");
-
     try {
-        console.log("saving measurement_units");
-        cachedConfig.measurement_units = measurement_units;
-        console.log("saveconfig called");
+        cachedConfig!.measurement_units = measurementUnits;
         saveConfig();
-    }
-    catch (e) {
-        console.log("Failed to set measurement units.")
+    } catch (error) {
+        print(`Failed to set measurement units: ${error}`);
     }
 }
 
@@ -137,7 +118,7 @@ const Config = {
     GetOpenWeatherCityCode,
     GetMeasurementUnits,
     GetDockLaunchers,
-    SetMeasurementUnits
+    SetMeasurementUnits,
 };
 
 export default Config;
