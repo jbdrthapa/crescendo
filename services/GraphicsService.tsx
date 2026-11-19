@@ -1,5 +1,6 @@
 import GObject from "gi://GObject";
 import GLib from "gi://GLib";
+import { TimerManager } from "../TimerManager";
 
 let dgpuPowerStatusPath: null | string = null;
 
@@ -20,7 +21,7 @@ const GraphicsServiceProperties = {
     )
 };
 
-const checkTimer = 1 * 1000;
+const checkTimer = 5 * 1000;
 
 class InternalGraphicsService extends GObject.Object {
     static instance: InternalGraphicsService;
@@ -31,6 +32,7 @@ class InternalGraphicsService extends GObject.Object {
 
     private dgpu_in_use = false;
     private dgpu_mode = "";
+    private readonly timers = new TimerManager();
 
     constructor() {
         super();
@@ -50,9 +52,9 @@ class InternalGraphicsService extends GObject.Object {
 
         this.refreshDGPUPowerStatus();
 
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, checkTimer, () => {
+        this.timers.repeat(checkTimer, () => {
             this.refreshDGPUPowerStatus();
-            return GLib.SOURCE_CONTINUE;
+            return true;
         });
 
         return true;

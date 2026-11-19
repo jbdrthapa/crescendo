@@ -76,9 +76,11 @@ function createNotificationRow(notification: AstalNotifd.Notification) {
   return row;
 }
 
+const MAX_NOTIFICATION_HISTORY = 100;
+
 export function NotificationsSettings() {
   const notifd = AstalNotifd.get_default();
-  let persistentNotifications = sortNotifications(notifd.get_notifications());
+  let persistentNotifications = sortNotifications(notifd.get_notifications()).slice(0, MAX_NOTIFICATION_HISTORY);
 
   const container = new Gtk.Box({
     orientation: Gtk.Orientation.VERTICAL,
@@ -162,9 +164,9 @@ export function NotificationsSettings() {
     if (!notification) return;
 
     const exists = persistentNotifications.some((item) => item.id === id);
-    persistentNotifications = exists
+    persistentNotifications = (exists
       ? persistentNotifications.map((item) => (item.id === id ? notification : item))
-      : [notification, ...persistentNotifications];
+      : [notification, ...persistentNotifications]).slice(0, MAX_NOTIFICATION_HISTORY);
 
     renderNotifications();
   });

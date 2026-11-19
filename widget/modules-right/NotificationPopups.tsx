@@ -3,11 +3,11 @@ import Gdk from "gi://Gdk?version=4.0";
 import { Astal, Gtk } from "ags/gtk4";
 import AstalNotifd from "gi://AstalNotifd";
 import Notification from "./Notification";
-import { createBinding, For, createState, onCleanup } from "ags";
+import { For, createState, onCleanup } from "ags";
+
+const MAX_VISIBLE_NOTIFICATIONS = 20;
 
 export default function NotificationPopups(monitor: Gdk.Monitor) {
-  const monitors = createBinding(app, "monitors");
-
   const notifd = AstalNotifd.get_default();
 
   const [notifications, setNotifications] = createState(
@@ -23,7 +23,7 @@ export default function NotificationPopups(monitor: Gdk.Monitor) {
         ns.map((n) => (n.id === id ? notification : n)),
       );
     } else {
-      setNotifications((ns) => [notification, ...ns]);
+      setNotifications((ns) => [notification, ...ns].slice(0, MAX_VISIBLE_NOTIFICATIONS));
     }
   });
 
@@ -40,9 +40,9 @@ export default function NotificationPopups(monitor: Gdk.Monitor) {
     <window
       application={app}
       class="NotificationPopups"
-      gdkmonitor={monitor}
       visible={notifications((ns) => ns.length > 0)}
       anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT}
+      gdkmonitor={monitor}
       $={(self) => onCleanup(() => self.destroy())}
     >
       <box orientation={Gtk.Orientation.VERTICAL}>

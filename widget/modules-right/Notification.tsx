@@ -4,7 +4,8 @@ import Adw from "gi://Adw"
 import GLib from "gi://GLib"
 import AstalNotifd from "gi://AstalNotifd"
 import Pango from "gi://Pango"
-import { createState } from "ags"
+import { createState, onCleanup } from "ags"
+import { TimerManager } from "../../TimerManager"
 
 interface NotificationProps {
     notification: AstalNotifd.Notification
@@ -39,21 +40,23 @@ function urgency(n: AstalNotifd.Notification) {
 export default function Notification({ notification: n }: NotificationProps) {
 
     const [reveal, setReveal] = createState(false)
+    const timers = new TimerManager()
 
     const animateAndClose = () => {
         setReveal(false)
-        setTimeout(() => n.dismiss(), 300)
+        timers.once(300, () => n.dismiss())
     }
 
-    setTimeout(animateAndClose, 5000)
+    timers.once(5000, animateAndClose)
 
+    onCleanup(() => timers.clear())
 
-    return (
+    const revealer = (
         <revealer
             revealChild={reveal}
             transitionType={Gtk.RevealerTransitionType.FADE_SLIDE_DOWN}
             transitionDuration={300}
-            $={(self) => setTimeout(() => setReveal(true), 10)}
+            $={() => timers.once(10, () => setReveal(true))}
         >
             <Adw.Clamp maximumSize={400}>
                 <box
@@ -98,4 +101,6 @@ export default function Notification({ notification: n }: NotificationProps) {
             </Adw.Clamp>
         </revealer>
     )
+
+    return revealer
 }

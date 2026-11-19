@@ -4,6 +4,7 @@ import { Astal } from "ags/gtk4";
 import AstalNiri from "gi://AstalNiri";
 import GObject from "gnim/gobject";
 import app from "ags/gtk4/app";
+import { TimerManager } from "../TimerManager";
 
 export default GObject.registerClass(
   {
@@ -11,6 +12,7 @@ export default GObject.registerClass(
   },
   class PopupWindow extends Astal.Window {
     private revealer: Gtk.Revealer;
+    private readonly timers = new TimerManager();
 
     constructor(props: any & { child: Gtk.Widget }) {
       const { name, child, ...rest } = props;
@@ -71,11 +73,11 @@ export default GObject.registerClass(
     hide_all() {
       this.revealer.reveal_child = false;
 
-      setTimeout(() => {
+      this.timers.once(50, () => {
         if (!this.revealer.reveal_child) {
           this.set_visible(false);
         }
-      }, 50);
+      });
     }
 
     toggle() {
@@ -85,9 +87,9 @@ export default GObject.registerClass(
         this.set_visible(true);
         this.hide_others();
 
-        setTimeout(() => {
+        this.timers.once(10, () => {
           this.revealer.reveal_child = true;
-        }, 10);
+        });
       }
     }
   }

@@ -30,11 +30,11 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
     const { TOP, BOTTOM, LEFT } = Astal.WindowAnchor;
 
     // Create ALL widgets INSIDE Bar() — never at module top-level
-    const modulesLeft = new ModulesLeft();
-    const modulesCenter = new ModulesCenter();
-    const modulesRight = new ModulesRight();
+    const modulesLeft = ModulesLeft();
+    const modulesCenter = ModulesCenter();
+    const modulesRight = ModulesRight();
     const settings = WidgetManager.GetSettingsWindow();
-    const dock = new Dock();
+    const dock = Dock();
     const desktopMenu = DesktopMenu();
     const workspaceWidget = WorkspaceWidget();
     const trayWidget = TrayWidget();
@@ -42,8 +42,8 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
     const graphicsWidget = GraphicsWidget();
     const idleWidget = IdleWidget();
     const batteryWidget = BatteryWidget();
-    const ipcService = new IPCService();
-    const idleService = new IdleService();
+    const ipcService = IPCService.get_default();
+    const idleService = IdleService.get_default();
 
     // Invisible backdrop window for click detection
     const backdropButton = (

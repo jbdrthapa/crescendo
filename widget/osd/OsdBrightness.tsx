@@ -3,15 +3,18 @@ import { createBinding, createState } from "ags";
 import DisplayService from "../../services/DisplayService";
 import app from "ags/gtk4/app";
 import { WindowName } from "../../constants";
+import { TimerManager } from "../../TimerManager";
 
 const ANIMATION_TIME = 2000;
-let delayId: any = null;
-let initCount = 5;
 
 export default function OsdBrightness(gdkmonitor: Gdk.Monitor) {
+    let delayId: number | null = null;
+    let initCount = 5;
+    const timers = new TimerManager();
+
     const windowName = WindowName.osd;
 
-    const brightness = DisplayService.get_default();
+    const brightness = DisplayService.get_default() as any;
     if (!brightness) return <box />;
 
     const brightnessBinding = createBinding(brightness, "brightness_percent");
@@ -30,12 +33,12 @@ export default function OsdBrightness(gdkmonitor: Gdk.Monitor) {
 
         setVisible(true);
 
-        if (delayId) clearTimeout(delayId);
+        if (delayId) timers.remove(delayId);
 
-        delayId = setTimeout(() => {
+        delayId = timers.once(ANIMATION_TIME, () => {
             setVisible(false);
             delayId = null;
-        }, ANIMATION_TIME);
+        });
     }
 
     brightness.connect("notify::brightness-percent", () => showOsd());

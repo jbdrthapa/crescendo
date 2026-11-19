@@ -374,4 +374,4 @@ class InternalDisplayService extends GObject.Object {
 }
 
 
-export default GObject.registerClass({ Properties: DisplayServiceProperties, }, InternalDisplayService);
+export default GObject.registerClass({ Properties: DisplayServiceProperties }, InternalDisplayService) as unknown as typeof InternalDisplayService;

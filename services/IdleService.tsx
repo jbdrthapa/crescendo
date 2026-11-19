@@ -1,6 +1,7 @@
 import GObject from "gi://GObject";
 import { execAsync, subprocess } from "ags/process";
 import GLib from "gi://GLib";
+import { TimerManager } from "../TimerManager";
 
 const IdleServiceProperties = {
     'is-idle-inhibited': GObject.ParamSpec.boolean(
@@ -12,7 +13,7 @@ const IdleServiceProperties = {
     ),
 };
 
-const checkTimer = 1 * 1000;
+const checkTimer = 10 * 1000;
 
 class InternalIdleService extends GObject.Object {
     static instance: InternalIdleService;
@@ -31,6 +32,7 @@ class InternalIdleService extends GObject.Object {
     private _displayPowerOnCommand = "niri msg action power-on-monitors";
 
     private _inhibitorProcess: any = null;
+    private readonly timers = new TimerManager();
 
     constructor() {
         super();
@@ -41,9 +43,9 @@ class InternalIdleService extends GObject.Object {
 
         this.refreshisIdleInhibited();
 
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, checkTimer, () => {
-            this.refreshisIdleInhibited();
-            return GLib.SOURCE_CONTINUE;
+        this.timers.repeat(checkTimer, () => {
+            void this.refreshisIdleInhibited();
+            return true;
         });
     }
 
@@ -105,7 +107,6 @@ class InternalIdleService extends GObject.Object {
 
     private async refreshisIdleInhibited() {
         try {
-
             const output = await execAsync(["systemd-inhibit", "--list", "--mode=block"]);
             this.is_idle_inhibited = output.includes("crescendo-shell");
             this.notify("is-idle-inhibited");

@@ -3,12 +3,15 @@ import { createBinding, createState } from "ags";
 import Wp from "gi://AstalWp";
 import app from "ags/gtk4/app";
 import { WindowName } from "../../constants";
+import { TimerManager } from "../../TimerManager";
 
 const ANIMATION_TIME = 2000;
-let delayId: any = null;
-let initCount = 2;
 
 export default function OsdMicrophone(gdkmonitor: Gdk.Monitor) {
+    let delayId: number | null = null;
+    let initCount = 2;
+    const timers = new TimerManager();
+
     const windowName = WindowName.osd;
 
     const microphone = Wp.get_default()?.get_audio().defaultMicrophone;
@@ -33,12 +36,12 @@ export default function OsdMicrophone(gdkmonitor: Gdk.Monitor) {
 
         setVisible(true);
 
-        if (delayId) clearTimeout(delayId);
+        if (delayId) timers.remove(delayId);
 
-        delayId = setTimeout(() => {
+        delayId = timers.once(ANIMATION_TIME, () => {
             setVisible(false);
             delayId = null;
-        }, ANIMATION_TIME);
+        });
     }
 
     microphone.connect("notify::volume", () => showOsd());

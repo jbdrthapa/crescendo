@@ -1,6 +1,7 @@
 import AstalCava from "gi://AstalCava";
 import { createState } from "ags";
 import GLib from "gi://GLib";
+import { TimerManager } from "../../TimerManager";
 
 const blocks = [
   "\u2581",
@@ -15,8 +16,7 @@ const blocks = [
 
 const checkTimer = 10 * 1000;
 const CAVA_BARS = 30;
-const FPS = 120;
-let isMusicPlaying = false;
+const FPS = 60;
 
 export const CavaWidget = () => {
   const cava = AstalCava.get_default()!;
@@ -27,25 +27,32 @@ export const CavaWidget = () => {
   const [visible, setVisible] = createState(false);
   const [visuals, setVisuals] = createState("");
 
-  isMusicPlaying = !(cava.bars === 0 || cava.values.length === 0 || cava.values.every((v) => v < 0.001));
+  let isMusicPlaying = !(cava.bars === 0 || cava.values.length === 0 || cava.values.every((v) => v < 0.001));
+  let lastVisuals = "";
+  const timers = new TimerManager();
 
-  GLib.timeout_add(GLib.PRIORITY_DEFAULT, checkTimer, () => {
+  timers.repeat(checkTimer, () => {
     isMusicPlaying = !(cava.bars === 0 || cava.values.length === 0 || cava.values.every((v) => v < 0.001));
-    return GLib.SOURCE_CONTINUE;
+    return true;
   });
 
   cava.connect("notify::values", ({ values }) => {
     if (isMusicPlaying) {
       setVisible(true);
-      setVisuals(
-        values
-          .map(
-            (val) => blocks[Math.min(Math.floor(val * 32), blocks.length - 1)],
-          )
-          .join(""),
-      );
+      const nextVisuals = values
+        .map((val) => blocks[Math.min(Math.floor(val * 32), blocks.length - 1)])
+        .join("");
+
+      if (nextVisuals !== lastVisuals) {
+        lastVisuals = nextVisuals;
+        setVisuals(nextVisuals);
+      }
     } else {
       setVisible(false);
+      if (lastVisuals !== "") {
+        lastVisuals = "";
+        setVisuals("");
+      }
     }
   });
 
