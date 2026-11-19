@@ -28,13 +28,6 @@ export function WorkspaceWidget() {
         <label label="󰛉" />
       </button>
 
-      <image
-        visible={focused.as(win => !!win)}
-        icon-name={focused.as(win => win?.app_id || "image-missing")}
-        cssName="active-window-icon"
-        tooltipText={focused.as(win => win?.title || "")}
-      />
-
       <button
         cssClasses={["workspace-item", "focus"]}
         onClicked={() => execAsync("niri msg action focus-window-up")}
@@ -66,6 +59,14 @@ export function WorkspaceWidget() {
       >
         <label label="" />
       </button>
+      <box widthRequest={22} heightRequest={22} halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER}>
+        <image
+          visible={focused.as(win => !!win)}
+          icon-name={focused.as(win => win?.app_id || "image-missing")}
+          cssName="active-window-icon"
+          tooltipText={focused.as(win => win?.title || "")}
+        />
+      </box>
     </box>
   )
 }
