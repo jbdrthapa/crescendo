@@ -3,18 +3,17 @@
 battery-container {
     background-color: $base-transparent;
     border-radius: $border-radius-circle;
-    border: 2px solid $overlay0;
-    padding: 5px 3px;
-    min-width: 20px;
+    border: 2px solid $surface1;
 }
 
 battery-percent {
     background: none;
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 800;
     font-variant-caps: all-petite-caps;
+    transform: rotate(270deg);
     color: $subtext1;
-    min-width: 0;
+    min-width: 46px;
 }
 
 battery-bar {

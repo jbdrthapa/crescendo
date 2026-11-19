@@ -1,17 +1,17 @@
 @use "theme" as *;
 
 tray-module-container {
-  background-color: $base-transparent;
+  background-color: $crust-transparent;
   border-radius: $border-radius-circle;
-  border: 2px solid $surface2;
-  padding: 6px 4px;
+  border: 2px solid $surface1;
+  padding: 8px 8px;
 }
 
 tray-module-button {
   border-radius: $border-radius;
   transition: transform 340ms cubic-bezier(.33, 1, .68, 1);
-  min-width: 24px;
-  min-height: 24px;
+  min-width: 22px;
+  min-height: 22px;
 }
 
 tray-module-button>button {

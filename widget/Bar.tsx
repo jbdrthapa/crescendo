@@ -92,7 +92,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
                 <box cssName="bar-center" orientation={Gtk.Orientation.VERTICAL} vexpand={true} valign={Gtk.Align.CENTER} halign={Gtk.Align.CENTER}>
                     
                 </box>
-                <box cssName="bar-end" orientation={Gtk.Orientation.VERTICAL} spacing={6} halign={Gtk.Align.CENTER} valign={Gtk.Align.END}>
+                <box cssName="bar-end" orientation={Gtk.Orientation.VERTICAL} spacing={6} halign={Gtk.Align.CENTER} valign={Gtk.Align.END} widthRequest={46} hexpand={false}>
                     {trayWidget}
                     {powerProfileWidget}
                     {graphicsWidget}

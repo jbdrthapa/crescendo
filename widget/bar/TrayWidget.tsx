@@ -27,6 +27,9 @@ export function TrayWidget() {
       cssName="tray-module-container"
       orientation={Gtk.Orientation.VERTICAL}
       halign={Gtk.Align.CENTER}
+      valign={Gtk.Align.CENTER}
+      hexpand={false}
+      vexpand={false}
       spacing={4}
     >
       <For each={items}>
