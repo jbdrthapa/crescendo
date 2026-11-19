@@ -33,6 +33,7 @@ class InternalAsusBatteryChargeLimitService extends GObject.Object {
   private charge_limit = 0;
   private is_supported = false;
   private readonly timers = new TimerManager();
+  private refreshInProgress = false;
 
   constructor() {
     super();
@@ -46,7 +47,15 @@ class InternalAsusBatteryChargeLimitService extends GObject.Object {
   }
 
   public async refreshChargeLimit(): Promise<void> {
+    if (this.refreshInProgress) {
+      return;
+    }
+
+    this.refreshInProgress = true;
+
     const limit = await this.readChargeLimit();
+
+    this.refreshInProgress = false;
 
     if (limit === null) {
       if (this.is_supported) {

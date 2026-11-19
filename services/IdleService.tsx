@@ -34,6 +34,8 @@ class InternalIdleService extends GObject.Object {
     private _inhibitorProcess: any = null;
     private readonly timers = new TimerManager();
 
+    private refreshInProgress = false;
+
     constructor() {
         super();
 
@@ -106,6 +108,10 @@ class InternalIdleService extends GObject.Object {
     }
 
     private async refreshisIdleInhibited() {
+        if (this.refreshInProgress) {
+            return;
+        }
+        this.refreshInProgress = true;
         try {
             const output = await execAsync(["systemd-inhibit", "--list", "--mode=block"]);
             this.is_idle_inhibited = output.includes("crescendo-shell");
@@ -115,6 +121,8 @@ class InternalIdleService extends GObject.Object {
             console.error("Failed to query systemd-inhibit list:", err);
             return false;
 
+        } finally {
+            this.refreshInProgress = false;
         }
     }
 

@@ -1,6 +1,5 @@
 import AstalCava from "gi://AstalCava";
-import { createState } from "ags";
-import GLib from "gi://GLib";
+import { createState, onCleanup } from "ags";
 import { TimerManager } from "../../TimerManager";
 
 const blocks = [
@@ -55,6 +54,8 @@ export const CavaWidget = () => {
       }
     }
   });
+
+  onCleanup(() => timers.clear());
 
   return (
     <box cssName={"cava"} visible={visible}>

@@ -5,6 +5,7 @@ import { Astal } from "ags/gtk4";
 import { WindowName } from "../constants";
 import { createBinding, createState } from "gnim";
 import SystemInfoService from "../services/SystemInfoService";
+import { TimerManager } from "../TimerManager";
 
 export function LockScreen() {
   const systemInfoService = SystemInfoService.get_default();
@@ -12,7 +13,7 @@ export function LockScreen() {
   const avatarImg = createBinding(systemInfoService, "avatar");
   const hostInfo = createBinding(systemInfoService, "host_info");
   const uptime = createBinding(systemInfoService, "uptime_info");
-  const auth_message = createBinding(systemInfoService, "auth-message");
+  const authMessage = createBinding(systemInfoService, "auth_message");
 
   const dynamicGtkCss = avatarImg.as(path => {
     const finalPath = (path && path.startsWith("/")) ? path : "avatar-default";
@@ -37,14 +38,14 @@ export function LockScreen() {
   const [reveal, setReveal] = createState(true);
 
   let lockScreenWindow: Astal.Window;
+  const timers = new TimerManager();
 
   function slideDownAndHide() {
     setReveal(false);
 
-    GLib.timeout_add(GLib.PRIORITY_DEFAULT, 800, () => {
+    timers.once(800, () => {
       lockScreenWindow.hide();
       setReveal(true);
-      return GLib.SOURCE_REMOVE;
     });
   }
 
@@ -57,7 +58,7 @@ export function LockScreen() {
       hexpand={true}
       cssName="lockscreen-background"
       $={() => {
-        setTimeout(() => setReveal(true), 10);
+        timers.once(10, () => setReveal(true));
       }}
     >
       <box
@@ -91,7 +92,7 @@ export function LockScreen() {
           }}
         />
 
-        <label label={auth_message} cssName="auth-message" />
+        <label label={authMessage} cssName="auth-message" />
       </box>
     </revealer>
   );

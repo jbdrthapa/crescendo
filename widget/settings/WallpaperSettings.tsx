@@ -8,8 +8,30 @@ const WALLPAPER_DIR = `${GLib.get_home_dir()}/Pictures`;
 const WALLPAPER_DIR_CACHE = `${WALLPAPER_DIR}/.cache/`;
 
 const thumbToOriginal = new Map<string, string>();
+const thumbnailQueue: Array<{ source: string; destination: string }> = [];
+let thumbnailQueueActive = false;
 
 const filenameLengthMax = 40;
+
+async function processThumbnailQueue(): Promise<void> {
+    if (thumbnailQueueActive) return;
+    thumbnailQueueActive = true;
+
+    try {
+        while (thumbnailQueue.length > 0) {
+            const item = thumbnailQueue.shift();
+            if (!item) continue;
+
+            try {
+                await execAsync(["convert", item.source, "-thumbnail", "256x144", item.destination]);
+            } catch (error) {
+                printerr(error);
+            }
+        }
+    } finally {
+        thumbnailQueueActive = false;
+    }
+}
 
 function getOriginalFromThumb(thumbPath: string): string | undefined {
     return thumbToOriginal.get(thumbPath);
@@ -21,8 +43,8 @@ function GetThumbnailFile(imageFile: string): string {
     GLib.mkdir_with_parents(WALLPAPER_DIR_CACHE, 0o755);
 
     if (!GLib.file_test(thumbnailFile, GLib.FileTest.EXISTS)) {
-        execAsync(["convert", imageFile, "-thumbnail", "256x144", thumbnailFile])
-            .catch(error => printerr(error));
+        thumbnailQueue.push({ source: imageFile, destination: thumbnailFile });
+        processThumbnailQueue();
     }
 
     return thumbnailFile;
