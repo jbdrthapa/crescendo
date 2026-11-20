@@ -97,10 +97,9 @@ export function BatteryWidget() {
     })
 
     return (
-        <box cssName="battery-container" orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER} hexpand={false} tooltipMarkup={batteryTooltip} widthRequest={46}>
+        <box cssName="battery-container" orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER} hexpand={true} tooltipMarkup={batteryTooltip} widthRequest={30}>
             <levelbar
-                    widthRequest={10}
-                    heightRequest={80}
+                    heightRequest={60}
                     orientation={Gtk.Orientation.VERTICAL}
                     hexpand={false}
                     vexpand={false}
