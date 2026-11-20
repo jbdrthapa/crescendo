@@ -25,6 +25,8 @@ export function ModulesRight() {
         anchor: Astal.WindowAnchor.TOP | Astal.WindowAnchor.LEFT,
         margin: 2,
         application: app,
+        marginTop: 10,
+        marginLeft: 10,
         child: (
             <box
                 cssName="modules-right-container"
