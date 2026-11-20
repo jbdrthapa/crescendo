@@ -74,9 +74,9 @@ export function ModulesRight() {
     const button = (
         <button
             onClicked={() => popup.toggle()}
-            cssName="bar-module-button"
+            cssName="bar-module-button-menu"
         >
-            <label label="󰣇" />
+            <label label="󰚾" />
         </button>
     ) as Gtk.Button & { popup: InstanceType<typeof PopupWindow> };
 

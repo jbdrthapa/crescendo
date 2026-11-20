@@ -12,7 +12,7 @@ export function ModulesLeft() {
             }}
             cssName={"bar-module-button"
             }>
-            <label label="" />
+            <label label="" />
         </button>
     ) as any;
 

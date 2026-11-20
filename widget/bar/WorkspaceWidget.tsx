@@ -25,7 +25,7 @@ export function WorkspaceWidget() {
         onClicked={() => execAsync("niri msg action close-window")}
         tooltipText={"Close Active"}
       >
-        <label label="󰛉" />
+        <label label="" />
       </button>
 
       <button
@@ -33,7 +33,7 @@ export function WorkspaceWidget() {
         onClicked={() => execAsync("niri msg action focus-column-left")}
         tooltipText={"Focus Left"}
       >
-        <label label="" />
+        <label label="" />
       </button>
 
       <box spacing={5} orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER}>
@@ -57,7 +57,7 @@ export function WorkspaceWidget() {
         onClicked={() => execAsync("niri msg action focus-column-right")}
         tooltipText={"Focus Right"}
       >
-        <label label="" />
+        <label label="" />
       </button>
       <box widthRequest={22} heightRequest={22} halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER}>
         <image
