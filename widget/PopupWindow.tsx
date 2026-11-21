@@ -14,6 +14,8 @@ export default GObject.registerClass(
     private revealer: Gtk.Revealer;
     private readonly timers = new TimerManager();
     private openState = false;
+    private readonly niri = AstalNiri.get_default();
+    private suppressFocusClose = false;
 
     constructor(props: any & { child: Gtk.Widget }) {
       const { name, child, ...rest } = props;
@@ -50,10 +52,15 @@ export default GObject.registerClass(
       });
       this.add_controller(keyController);
 
-      const niri = AstalNiri.get_default();
-
-      niri.connect("overview-opened-or-closed", () => {
+      this.niri.connect("overview-opened-or-closed", () => {
         this.hide_all();
+      });
+
+      this.niri.connect("window-focus-changed", (_niri, windowId: number) => {
+        if (!this.openState || this.suppressFocusClose) return;
+        if (windowId > 0) {
+          this.hide_all();
+        }
       });
     }
 
@@ -72,6 +79,7 @@ export default GObject.registerClass(
 
     hide_all() {
       this.openState = false;
+      this.suppressFocusClose = false;
       this.timers.clear();
       this.revealer.reveal_child = false;
       this.set_visible(false);
@@ -84,6 +92,10 @@ export default GObject.registerClass(
     forceOpen() {
       this.openState = true;
       this.timers.clear();
+      this.suppressFocusClose = true;
+      this.timers.once(500, () => {
+        this.suppressFocusClose = false;
+      });
       this.set_visible(true);
       this.hide_others();
       this.revealer.reveal_child = true;
