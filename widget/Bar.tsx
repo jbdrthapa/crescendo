@@ -1,6 +1,7 @@
 import app from "ags/gtk4/app";
 import Gtk from "gi://Gtk?version=4.0";
 import { Astal, Gdk } from "ags/gtk4";
+import GLib from "gi://GLib";
 
 import { ModulesCenter } from "./modules-center/ModulesCenter";
 import { ModulesLeft } from "./modules-left/ModulesLeft";
@@ -105,40 +106,39 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
     ) as Astal.Window;
 
     // Backdrop click gestures
-    const backdropButtonGesture = new Gtk.GestureClick();
-    backdropButtonGesture.set_button(0);
+    const leftClickGesture = new Gtk.GestureClick();
+    leftClickGesture.set_button(1);
+    leftClickGesture.connect("pressed", () => {
+        CloseAllMenus(settings, modulesRight, desktopMenu);
+    });
+    backdropButton.add_controller(leftClickGesture);
+
+    const rightClickGesture = new Gtk.GestureClick();
+    rightClickGesture.set_button(3);
 
     const offset = 8;
 
-    backdropButtonGesture.connect("pressed", (controller, _n, x, y) => {
-        const button = controller.get_current_button();
-
-        if (button === 1) {
-            CloseAllMenus(settings, modulesRight, desktopMenu);
-        } else if (button === 3) {
-            desktopMenu.marginLeft = x + offset;
-            desktopMenu.marginTop = y + offset;
-            desktopMenu.toggle();
-        }
+    rightClickGesture.connect("pressed", (_controller, _n, x, y) => {
+        desktopMenu.marginLeft = x + offset;
+        desktopMenu.marginTop = y + offset;
+        desktopMenu.toggle();
     });
 
-    backdropButton.add_controller(backdropButtonGesture);
+    backdropButton.add_controller(rightClickGesture);
 
-    // Clicking the bar hides other windows
+    // Clicking empty areas of the bar closes open popups.
+    // Deferred handling allows bar button gestures to suppress this close.
     const barGesture = new Gtk.GestureClick();
+    barGesture.set_button(1);
     barGesture.connect("pressed", () => {
-        hide_others();
-    });
-
-    barWindow.add_controller(barGesture);
-
-    function hide_others() {
-        app.get_windows().forEach(window => {
-            if (window !== barWindow && window.name !== "bar-background") {
-                window.hide()
+        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 10, () => {
+            if (!WidgetManager.ConsumeNextBarClose()) {
+                CloseAllMenus(settings, modulesRight, desktopMenu);
             }
+            return GLib.SOURCE_REMOVE;
         });
-    }
+    });
+    barWindow.add_controller(barGesture);
 
     // Register windows with main app
     app.add_window(backdrop);

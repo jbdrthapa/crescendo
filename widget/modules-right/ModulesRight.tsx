@@ -9,6 +9,7 @@ import { DisplayControlsWidget } from "./DisplayControlsWidget";
 import { AudioControlsWidget } from "./AudioControlsWidget";
 import { PowerButtonsWidget } from "./PowerButtons";
 import { WindowName } from "../../constants";
+import WidgetManager from "../../WidgetManager";
 
 const windowName = WindowName.modulesRight;
 
@@ -73,12 +74,19 @@ export function ModulesRight() {
 
     const button = (
         <button
-            onClicked={() => popup.toggle()}
             cssName="bar-module-button-menu"
         >
             <label label="󰚾" />
         </button>
     ) as Gtk.Button & { popup: InstanceType<typeof PopupWindow> };
+
+    const gesture = new Gtk.GestureClick();
+    gesture.set_button(1);
+    gesture.connect("pressed", () => {
+        WidgetManager.SuppressNextBarClose();
+        popup.toggle();
+    });
+    button.add_controller(gesture);
 
     button.popup = popup;
 

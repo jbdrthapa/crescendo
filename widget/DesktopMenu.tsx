@@ -7,11 +7,6 @@ import WidgetManager from "../WidgetManager";
 
 const windowName = WindowName.desktopMenu;
 
-function showSettings(action: (() => void) | undefined, settings = WidgetManager.GetSettingsWindow()) {
-    action?.();
-    settings.toggle();
-}
-
 export function DesktopMenu() {
     const settings = WidgetManager.GetSettingsWindow();
 
@@ -24,25 +19,37 @@ export function DesktopMenu() {
             <box orientation={Gtk.Orientation.VERTICAL}>
                 <button
                     cssName="desktop-menu-button"
-                    onClicked={() => showSettings(settings.Apps, settings)}
+                    onClicked={() => {
+                        settings.Apps();
+                        settings.forceOpen();
+                    }}
                 >
                     Apps
                 </button>
                 <button
                     cssName="desktop-menu-button"
-                    onClicked={() => showSettings(settings.Wallpaper, settings)}
+                    onClicked={() => {
+                        settings.Wallpaper();
+                        settings.forceOpen();
+                    }}
                 >
                     Wallpaper
                 </button>
                 <button
                     cssName="desktop-menu-button"
-                    onClicked={() => showSettings(settings.Power, settings)}
+                    onClicked={() => {
+                        settings.Power();
+                        settings.forceOpen();
+                    }}
                 >
                     Power
                 </button>
                 <button
                     cssName="desktop-menu-button"
-                    onClicked={() => showSettings(settings.Settings, settings)}
+                    onClicked={() => {
+                        settings.Settings();
+                        settings.forceOpen();
+                    }}
                 >
                     Settings
                 </button>

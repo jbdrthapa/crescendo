@@ -13,6 +13,7 @@ export default GObject.registerClass(
   class PopupWindow extends Astal.Window {
     private revealer: Gtk.Revealer;
     private readonly timers = new TimerManager();
+    private openState = false;
 
     constructor(props: any & { child: Gtk.Widget }) {
       const { name, child, ...rest } = props;
@@ -51,12 +52,6 @@ export default GObject.registerClass(
 
       const niri = AstalNiri.get_default();
 
-      niri.connect("notify::focused-window", (service) => {
-        if (service.focused_window?.title) {
-          this.hide_all();
-        }
-      });
-
       niri.connect("overview-opened-or-closed", () => {
         this.hide_all();
       });
@@ -65,32 +60,42 @@ export default GObject.registerClass(
     hide_others() {
       app.get_windows().forEach((window) => {
         if (window !== this && window.name !== "bar-background") {
-          window.hide();
+          const popup = window as typeof window & { hide_all?: () => void };
+          if (typeof popup.hide_all === "function") {
+            popup.hide_all();
+          } else {
+            window.hide();
+          }
         }
       });
     }
 
     hide_all() {
+      this.openState = false;
+      this.timers.clear();
       this.revealer.reveal_child = false;
+      this.set_visible(false);
+    }
 
-      this.timers.once(50, () => {
-        if (!this.revealer.reveal_child) {
-          this.set_visible(false);
-        }
-      });
+    isOpen() {
+      return this.openState;
+    }
+
+    forceOpen() {
+      this.openState = true;
+      this.timers.clear();
+      this.set_visible(true);
+      this.hide_others();
+      this.revealer.reveal_child = true;
     }
 
     toggle() {
-      if (this.get_visible() && this.revealer.reveal_child) {
+      if (this.isOpen()) {
         this.hide_all();
-      } else {
-        this.set_visible(true);
-        this.hide_others();
-
-        this.timers.once(10, () => {
-          this.revealer.reveal_child = true;
-        });
+        return;
       }
+
+      this.forceOpen();
     }
   }
 );

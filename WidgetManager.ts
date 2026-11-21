@@ -4,6 +4,8 @@ import { LockScreen } from "./widget/LockScreen";
 let settingsInstance: SettingsWindow | null = null;
 let lockScreenInstance: ReturnType<typeof LockScreen> | null = null;
 
+let suppressNextBarClose = false;
+
 export function GetSettingsWindow(): SettingsWindow {
   if (!settingsInstance) {
     settingsInstance = Settings();
@@ -32,11 +34,23 @@ export function DisposeSettingsWindow() {
   }
 }
 
+export function SuppressNextBarClose() {
+  suppressNextBarClose = true;
+}
+
+export function ConsumeNextBarClose(): boolean {
+  if (!suppressNextBarClose) return false;
+  suppressNextBarClose = false;
+  return true;
+}
+
 const WidgetManager = {
   GetSettingsWindow,
   GetLockScreenWindow,
   InitializeLockScreenWindow,
   DisposeSettingsWindow,
+  SuppressNextBarClose,
+  ConsumeNextBarClose,
 };
 
 export default WidgetManager;
