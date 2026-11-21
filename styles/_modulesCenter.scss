@@ -26,14 +26,13 @@ date-time-weather-container button {
 
 bar-hour,
 bar-minute {
-  font-weight: 600;
-  color: $subtext1;
-  font-size: 24px;
-  letter-spacing: -1px;
+  font-weight: 500;
+  color: $subtext0;
+  font-size: 28px;
 }
 
 bar-minute {
-  color: $accent-background;
+  color: $subtext1;
 }
 
 bar-date {

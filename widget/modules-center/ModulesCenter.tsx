@@ -9,7 +9,7 @@ export function WeatherBarWidget() {
     const weatherService = WeatherService.get_default();
 
     return (
-        <box orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER}>
+        <box orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER} spacing={10}>
             <label halign={Gtk.Align.CENTER} label={createBinding(weatherService, "icon")} cssName="bar-weather-icon" />
             <label halign={Gtk.Align.CENTER} label={createBinding(weatherService, "temperature")} cssName="bar-weather-temperature" />
         </box>
@@ -31,10 +31,14 @@ export function ModulesCenter() {
                 settings?.Today();
                 settings?.toggle();
             }} >
-                <box halign={Gtk.Align.CENTER} orientation={Gtk.Orientation.VERTICAL} spacing={4}>
-                    <label label={hour} halign={Gtk.Align.CENTER} cssName={"bar-hour"} />
-                    <label label={minute} halign={Gtk.Align.CENTER} cssName={"bar-minute"} />
-                    {weatherBarWidget}
+                <box orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER} spacing={15}>
+                    <box halign={Gtk.Align.CENTER} orientation={Gtk.Orientation.VERTICAL}>
+                        <label label={hour} halign={Gtk.Align.CENTER} cssName={"bar-hour"} />
+                        <label label={minute} halign={Gtk.Align.CENTER} cssName={"bar-minute"} />
+                    </box>
+                    <box>
+                        {weatherBarWidget}
+                    </box>
                 </box>
             </button>
         </box>
