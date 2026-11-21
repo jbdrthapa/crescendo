@@ -22,11 +22,11 @@ export function ModulesRight() {
     const popup = new PopupWindow({
         name: windowName,
         namespace: windowName,
-        anchor: Astal.WindowAnchor.TOP | Astal.WindowAnchor.LEFT,
+        anchor: Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT,
         margin: 2,
         application: app,
         marginTop: 10,
-        marginLeft: 10,
+        marginRight: 10,
         child: (
             <box
                 cssName="modules-right-container"

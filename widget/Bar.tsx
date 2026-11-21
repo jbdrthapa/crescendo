@@ -27,7 +27,7 @@ function CloseAllMenus(settings: any, modulesRight: any, desktopMenu: any) {
 }
 
 export default function Bar(gdkmonitor: Gdk.Monitor) {
-    const { TOP, BOTTOM, LEFT } = Astal.WindowAnchor;
+    const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor;
 
     // Create ALL widgets INSIDE Bar() — never at module top-level
     const modulesLeft = ModulesLeft();
@@ -79,7 +79,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
             gdkmonitor={gdkmonitor}
             exclusivity={Astal.Exclusivity.EXCLUSIVE}
             layer={Astal.Layer.TOP}
-            anchor={TOP | LEFT | BOTTOM}
+            anchor={TOP | RIGHT | BOTTOM}
             application={app}
         >
             <box cssName="bar" orientation={Gtk.Orientation.VERTICAL} vexpand={true} hexpand={false} spacing={6}>

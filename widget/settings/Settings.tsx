@@ -59,7 +59,7 @@ export function Settings(): SettingsWindow {
     const settingsPopup = new PopupWindow({
         name: windowName,
         namespace: windowName,
-        anchor: Astal.WindowAnchor.TOP | Astal.WindowAnchor.LEFT,
+        anchor: Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT,
         exclusivity: Astal.Exclusivity.EXCLUSIVE,
         application: app,
         child: (
