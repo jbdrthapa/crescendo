@@ -64,3 +64,15 @@ ethernet-icon {
   font-size: 16px;
   color: $subtext1;
 }
+
+wireless-container {
+  background-color: $crust-transparent;
+  border-radius: $border-radius-circle;
+  border: 1px solid $surface1;
+  min-height: 25px;
+}
+
+wireless-icon {
+  font-size: 16px;
+  color: $subtext1;
+}
