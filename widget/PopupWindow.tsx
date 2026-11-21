@@ -58,9 +58,7 @@ export default GObject.registerClass(
 
       this.niri.connect("window-focus-changed", (_niri, windowId: number) => {
         if (!this.openState || this.suppressFocusClose) return;
-        if (windowId > 0) {
-          this.hide_all();
-        }
+        this.hide_all();
       });
     }
 
