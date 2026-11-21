@@ -24,10 +24,11 @@ graphics-mode-container {
   background-color: $crust-transparent;
   border-radius: $border-radius-circle;
   border: 1px dashed $surface1;
+  min-height: 25px;
 }
 
 .discrete-graphics-icon {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   color: $subtext1;
 }
@@ -50,4 +51,16 @@ graphics-mode-container {
 .discrete-graphics-icon-suspending {
   @extend .discrete-graphics-icon;
   color: $orange;
+}
+
+ethernet-container {
+  background-color: $crust-transparent;
+  border-radius: $border-radius-circle;
+  border: 1px solid $surface1;
+  min-height: 25px;
+}
+
+ethernet-icon {
+  font-size: 16px;
+  color: $subtext1;
 }

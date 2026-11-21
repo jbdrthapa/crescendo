@@ -4,6 +4,7 @@ power-profile-button {
     background-color: $crust-transparent;
     border-radius: $border-radius-circle;
     border: 1px dashed $surface1;
+    min-height: 25px;
 }
 
 .power-profile-power-saver {

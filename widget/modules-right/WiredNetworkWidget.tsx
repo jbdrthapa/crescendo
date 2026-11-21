@@ -61,15 +61,15 @@ export function WiredNetworkWidget(controller: AccordionController) {
     const iconName = createBinding(wired, "iconName");
 
     const deviceInterface = createComputed(() => {
-        return device().interface;
+        return device()?.interface ?? "Unavailable";
     });
 
     const macAddress = createComputed(() => {
-        return device().hwAddress;
+        return device()?.hwAddress ?? "Unavailable";
     });
 
     const mtu = createComputed(() => {
-        return device().mtu.toString();
+        return device()?.mtu?.toString() ?? "Unavailable";
     });
 
     const rawState = createBinding(wired, "state");
@@ -95,15 +95,15 @@ export function WiredNetworkWidget(controller: AccordionController) {
     const statePillLabel = createComputed(() => {
         let stateInfo = rawState();
         if (stateInfo == Network.DeviceState.ACTIVATED) {
-            return device().interface;
+            return device()?.interface ?? "Unavailable";
         } else {
-            return stateNames[stateInfo];
+            return stateNames[stateInfo] ?? "Unavailable";
         }
     });
 
     const rawSpeed = createBinding(wired, "speed");
     const speed = createComputed(() => {
-        return NM_SPEED[rawSpeed()] ?? "?";
+        return NM_SPEED[rawSpeed()] ?? "Unknown";
     });
 
 
@@ -140,7 +140,11 @@ export function WiredNetworkWidget(controller: AccordionController) {
 
 
     refreshNetworkButton.connect("clicked", async () => {
-        const iface = deviceInterface();
+        const iface = device()?.interface;
+        if (!iface) {
+            console.warn("Cannot toggle wired network: Ethernet adapter is unavailable.");
+            return;
+        }
 
         try {
             await execAsync(`sudo ip link set dev ${iface} down`);
