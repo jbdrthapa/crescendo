@@ -7,6 +7,62 @@ power-profile-button {
     min-height: 25px;
 }
 
+power-profile-popover {
+    padding: 8px;
+    min-width: 220px;
+}
+
+power-profile-detail-label {
+    color: $subtext1;
+    font-weight: bold;
+}
+
+power-profile-detail-value {
+    color: $text;
+}
+
+power-profile-divider {
+    min-height: 1px;
+    background-color: $surface1;
+    margin: 4px 0;
+}
+
+power-profile-row {
+    background: transparent;
+    border: none;
+    border-radius: $border-radius;
+    padding: 6px 8px;
+}
+
+power-profile-row:hover {
+    background-color: $surface0;
+}
+
+power-profile-row-active {
+    background-color: $surface1;
+}
+
+power-profile-row-label {
+    color: $text;
+}
+
+power-profile-row-check {
+    color: $green;
+}
+
+power-profile-row-icon {
+    color: $subtext1;
+    margin-right: 8px;
+}
+
+power-profile-row-icon-saver {
+    color: $green;
+}
+
+power-profile-row-icon-performance {
+    color: $red;
+}
+
 .power-profile-power-saver {
     font-size: 22px;
     font-weight: 600;
