@@ -76,3 +76,33 @@ wireless-icon {
   font-size: 16px;
   color: $subtext1;
 }
+
+wireless-popover {
+  padding: 8px;
+  min-width: 220px;
+}
+
+wireless-detail-row {
+  background: transparent;
+  border: none;
+  border-radius: $border-radius;
+  padding: 5px 6px;
+}
+
+wireless-detail-row:hover {
+  background-color: $surface0;
+}
+
+wireless-detail-label {
+  color: $subtext1;
+  font-weight: bold;
+}
+
+wireless-detail-value {
+  color: $text;
+}
+
+wireless-copy-icon {
+  color: $overlay1;
+  margin-left: 4px;
+}
