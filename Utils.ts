@@ -54,8 +54,14 @@ export function GetTerminal() {
     return "xterm";
 }
 
+export function GetPicturesDirectory() {
+    return GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES)
+        ?? GLib.build_filenamev([GLib.get_home_dir(), "Pictures"]);
+}
+
 const Utils = {
     GetHomeDirectory,
+    GetPicturesDirectory,
     GetUserConfigDirectory,
     GetSessionType,
     CloseOverview,

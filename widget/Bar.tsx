@@ -22,6 +22,8 @@ import { EthernetWidget } from "./bar/EthernetWidget";
 import { WirelessWidget } from "./bar/WirelessWidget";
 import { VolumeWidget } from "./bar/VolumeWidget";
 import { KDEConnectWidget } from "./bar/KDEConnectWidget";
+import WallpaperService from "../services/WallpaperService";
+import { createBinding, createComputed } from "gnim";
 
 const windowName = WindowName.bar;
 
@@ -53,10 +55,36 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
     const kdeConnectWidget = KDEConnectWidget();
     const ipcService = IPCService.get_default();
     const idleService = IdleService.get_default();
+    const wallpaperService = WallpaperService.get_default();
+
+    // Wallpaper bindings
+    const wallpaperPath = createBinding(wallpaperService, "wallpaper");
+    const wallpaperFit = createBinding(wallpaperService, "wallpaper_fit");
+    const wallpaperCss = createComputed(() => {
+        const path = wallpaperPath() || "";
+        const fit = wallpaperFit() || "fullscreen";
+
+        if (!path) return "background: none;";
+
+        const escapedPath = path.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+        let size = "cover";
+        let repeat = "no-repeat";
+
+        if (fit === "tiled") {
+            size = "auto";
+            repeat = "repeat";
+        } else if (fit === "stretched") {
+            size = "100% 100%";
+        } else if (fit === "zoomed") {
+            size = "125% 125%";
+        }
+
+        return `background-image: url('file://${escapedPath}'); background-size: ${size}; background-position: center; background-repeat: ${repeat};`;
+    });
 
     // Invisible backdrop window for click detection
     const backdropButton = (
-        <button cssName="invisible-backdrop" />
+        <button cssName="invisible-backdrop" css={wallpaperCss} />
     ) as Gtk.Button;
 
     const backdrop = (

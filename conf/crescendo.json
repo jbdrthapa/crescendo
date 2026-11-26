@@ -10,5 +10,7 @@
         "vscodium",
         "gnome-calculator",
         "authenticator"
-    ]
+    ],
+    "wallpaper_path": "black-rocks-3840x2160-13128.jpg",
+    "wallpaper_fit": "stretched"
 }

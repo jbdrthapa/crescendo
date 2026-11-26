@@ -3,8 +3,11 @@ import GLib from "gi://GLib";
 import Gio from 'gi://Gio';
 import { execAsync } from "ags/process";
 import Pango from "gi://Pango";
+import Config from "../../conf/Config";
+import Utils from "../../Utils";
+import WallpaperService from "../../services/WallpaperService";
 
-const WALLPAPER_DIR = `${GLib.get_home_dir()}/Pictures`;
+const WALLPAPER_DIR = Utils.GetPicturesDirectory();
 const WALLPAPER_DIR_CACHE = `${WALLPAPER_DIR}/.cache/`;
 
 const thumbToOriginal = new Map<string, string>();
@@ -63,7 +66,7 @@ function GetThumbnailFile(imageFile: string): string {
 }
 
 function SetWallpaper(image: string): void {
-    execAsync(["awww", "img", "--transition-type", "random", "--transition-fps", "120", "--transition-duration", "1", image]);
+    WallpaperService.get_default().setWallpaper(image);
 }
 
 function GetFileMetadata(filePath: string): string {
@@ -104,6 +107,28 @@ export function WallpaperSettings(): Gtk.Widget {
         column_spacing: 15,
         row_spacing: 15,
         selection_mode: Gtk.SelectionMode.NONE,
+    });
+
+    const FIT_OPTIONS = [
+        { display: "Tiled", value: "tiled" },
+        { display: "Fullscreen", value: "fullscreen" },
+        { display: "Zoomed", value: "zoomed" },
+        { display: "Stretched", value: "stretched" },
+    ];
+
+    const fitModel = Gtk.StringList.new(FIT_OPTIONS.map(option => option.display));
+    const savedFitIndex = FIT_OPTIONS.findIndex(option => option.value === Config.GetWallpaperFit());
+    const fitDropDown = new Gtk.DropDown({
+        model: fitModel,
+        selected: savedFitIndex >= 0 ? savedFitIndex : 1,
+        halign: Gtk.Align.START,
+        width_request: 200,
+    });
+
+    fitDropDown.connect("notify::selected", (dropDown) => {
+        const selected = dropDown.get_selected();
+        const option = FIT_OPTIONS[selected];
+        if (option) WallpaperService.get_default().setFit(option.value);
     });
 
     let debounceId = 0;
@@ -279,6 +304,12 @@ export function WallpaperSettings(): Gtk.Widget {
     wallpaperMonitors.add(monitor);
 
     return (
-        <scrolledwindow child={flowbox} />
+        <box orientation={Gtk.Orientation.VERTICAL} spacing={10}>
+            <box orientation={Gtk.Orientation.HORIZONTAL} spacing={10} halign={Gtk.Align.START}>
+                <label label="Wallpaper fit" valign={Gtk.Align.CENTER} />
+                {fitDropDown}
+            </box>
+            <scrolledwindow child={flowbox} vexpand={true} />
+        </box>
     ) as Gtk.Widget;
 }
