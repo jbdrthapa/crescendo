@@ -32,18 +32,15 @@ bar-minute {
 }
 
 bar-minute {
-  color: $subtext1;
+  color: $accent-background-transparent;
 }
 
 bar-date {
-  font-weight: 800;
+  font-weight: 600;
   font-size: 14px;
   font-variant-caps: all-petite-caps;
   color: $subtext1;
-  transform: rotate(90deg);
-  min-width: 90px;
-  min-height: 24px;
-  margin: 32px 0;
+  margin-top: 0;
 }
 
 time-container {
@@ -157,4 +154,10 @@ detail-calendar grid label:hover {
   color: $subtext0;
   font-weight: 600;
   border-radius: $border-radius;
+}
+
+bar-date-separator {
+  border-top: 2px dashed $overlay0;
+  min-width: 36px;
+  margin-top: 10px;
 }
