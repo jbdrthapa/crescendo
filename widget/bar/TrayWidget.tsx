@@ -53,6 +53,7 @@ export function TrayWidget() {
     if (item.menuModel) {
       const popover = Gtk.PopoverMenu.new_from_model(item.menuModel)
       popover.set_parent(btn)
+      popover.set_position(Gtk.PositionType.LEFT)
 
       const rightClick = new Gtk.GestureClick({ button: 3 })
       rightClick.connect("released", () => {
