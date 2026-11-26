@@ -21,6 +21,7 @@ import { IdleWidget } from "./bar/IdleWidget";
 import { EthernetWidget } from "./bar/EthernetWidget";
 import { WirelessWidget } from "./bar/WirelessWidget";
 import { VolumeWidget } from "./bar/VolumeWidget";
+import { KDEConnectWidget } from "./bar/KDEConnectWidget";
 
 const windowName = WindowName.bar;
 
@@ -49,6 +50,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
     const wirelessWidget = WirelessWidget();
     const batteryWidget = BatteryWidget();
     const volumeWidget = VolumeWidget();
+    const kdeConnectWidget = KDEConnectWidget();
     const ipcService = IPCService.get_default();
     const idleService = IdleService.get_default();
 
@@ -108,8 +110,9 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
                     {wirelessWidget}
                     {volumeWidget}
                     {batteryWidget}
+                    {kdeConnectWidget}
                 </box>
-            </box>
+            </box>3
         </window>
 
     ) as Astal.Window;
