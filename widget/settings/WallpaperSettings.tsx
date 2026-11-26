@@ -9,6 +9,9 @@ const WALLPAPER_DIR_CACHE = `${WALLPAPER_DIR}/.cache/`;
 
 const thumbToOriginal = new Map<string, string>();
 const thumbnailQueue: Array<{ source: string; destination: string }> = [];
+const thumbnailPending = new Set<string>();
+const thumbnailReadyListeners = new Set<(thumbnailPath: string) => void>();
+const wallpaperMonitors = new Set<Gio.FileMonitor>();
 let thumbnailQueueActive = false;
 
 const filenameLengthMax = 40;
@@ -24,8 +27,15 @@ async function processThumbnailQueue(): Promise<void> {
 
             try {
                 await execAsync(["convert", item.source, "-thumbnail", "256x144", item.destination]);
+                if (GLib.file_test(item.destination, GLib.FileTest.EXISTS)) {
+                    for (const listener of thumbnailReadyListeners) {
+                        listener(item.destination);
+                    }
+                }
             } catch (error) {
                 printerr(error);
+            } finally {
+                thumbnailPending.delete(item.destination);
             }
         }
     } finally {
@@ -42,9 +52,11 @@ function GetThumbnailFile(imageFile: string): string {
     const thumbnailFile = WALLPAPER_DIR_CACHE + baseFileName;
     GLib.mkdir_with_parents(WALLPAPER_DIR_CACHE, 0o755);
 
-    if (!GLib.file_test(thumbnailFile, GLib.FileTest.EXISTS)) {
+    if (!GLib.file_test(thumbnailFile, GLib.FileTest.EXISTS) &&
+        !thumbnailPending.has(thumbnailFile)) {
+        thumbnailPending.add(thumbnailFile);
         thumbnailQueue.push({ source: imageFile, destination: thumbnailFile });
-        processThumbnailQueue();
+        void processThumbnailQueue();
     }
 
     return thumbnailFile;
@@ -94,74 +106,177 @@ export function WallpaperSettings(): Gtk.Widget {
         selection_mode: Gtk.SelectionMode.NONE,
     });
 
-    const files: string[] = [];
-    try {
-        const dir = GLib.Dir.open(WALLPAPER_DIR, 0);
-        let name;
-        while ((name = dir.read_name())) {
-            if (name.match(/\.(jpg|jpeg|png|webp)$/i)) {
-                const imageFile = `${WALLPAPER_DIR}/${name}`;
-                const thumbnailFile = GetThumbnailFile(imageFile);
-                thumbToOriginal.set(thumbnailFile, imageFile);
-                files.push(thumbnailFile);
+    let debounceId = 0;
+    let thumbnailRefreshId = 0;
+    let thumbnailRefreshAttempts = 0;
+
+    let wallpaperSnapshot = "";
+
+    const getWallpaperNames = (): string[] => {
+        const names: string[] = [];
+        try {
+            const dir = GLib.Dir.open(WALLPAPER_DIR, 0);
+            let name;
+            while ((name = dir.read_name())) {
+                if (name.match(/\.(jpg|jpeg|png|webp)$/i)) {
+                    names.push(name);
+                }
+            }
+            dir.close();
+        } catch (error) {
+            console.error("Dir error:", error);
+        }
+        names.sort((a, b) => a.localeCompare(b));
+        return names;
+    };
+
+    const rebuildGrid = (): void => {
+        flowbox.remove_all();
+        thumbToOriginal.clear();
+
+        let missingThumbnail = false;
+        const files: string[] = [];
+        const names = getWallpaperNames();
+
+        for (const name of names) {
+            const imageFile = `${WALLPAPER_DIR}/${name}`;
+            const thumbnailFile = GetThumbnailFile(imageFile);
+            if (!GLib.file_test(thumbnailFile, GLib.FileTest.EXISTS)) {
+                missingThumbnail = true;
+            }
+            thumbToOriginal.set(thumbnailFile, imageFile);
+            files.push(thumbnailFile);
+        }
+
+        if (GLib.file_test(WALLPAPER_DIR_CACHE, GLib.FileTest.IS_DIR)) {
+            try {
+                const cacheDir = GLib.Dir.open(WALLPAPER_DIR_CACHE, 0);
+                let cacheName;
+                while ((cacheName = cacheDir.read_name())) {
+                    if (!names.includes(cacheName)) {
+                        GLib.remove(WALLPAPER_DIR_CACHE + cacheName);
+                    }
+                }
+                cacheDir.close();
+            } catch (error) {
+                console.error("Wallpaper cache cleanup error:", error);
             }
         }
-        dir.close();
-    } catch (error) {
-        console.error("Dir error:", error);
-    }
 
-    for (const path of files) {
-        const thumbnailName = GLib.path_get_basename(path);
-        const originalFile = getOriginalFromThumb(path) ?? "";
-        const metadata = GetFileMetadata(originalFile);
-        const filenameShort = thumbnailName.length > filenameLengthMax
-            ? thumbnailName.substring(0, filenameLengthMax) + "..."
-            : thumbnailName;
-        const file = Gio.File.new_for_path(path);
+        for (const path of files) {
+            const thumbnailName = GLib.path_get_basename(path);
+            const originalFile = getOriginalFromThumb(path) ?? "";
+            const metadata = GetFileMetadata(originalFile);
+            const filenameShort = thumbnailName.length > filenameLengthMax
+                ? thumbnailName.substring(0, filenameLengthMax) + "..."
+                : thumbnailName;
+            const file = Gio.File.new_for_path(path);
 
-        const tile = (
-            <box
-                orientation={Gtk.Orientation.VERTICAL}
-                overflow={Gtk.Overflow.HIDDEN}
-                focusable={true}
-                canFocus={true}
-            >
-                <Gtk.Picture
-                    cssName="wallpaper-image"
-                    file={file}
-                    hexpand={true}
-                    vexpand={true}
-                    keepAspectRatio={true}
-                    contentFit={Gtk.ContentFit.COVER}
-                />
-                <label
-                    cssName="wallpaper-label"
-                    label={filenameShort}
-                    tooltipMarkup={metadata}
-                    wrap={true}
-                    wrap_mode={Pango.WrapMode.WORD_CHAR}
-                    max_width_chars={20}
-                    valign={Gtk.Align.END}
-                    halign={Gtk.Align.FILL}
-                />
-            </box>
-        ) as Gtk.Widget;
+            const tile = (
+                <box
+                    orientation={Gtk.Orientation.VERTICAL}
+                    overflow={Gtk.Overflow.HIDDEN}
+                    focusable={true}
+                    canFocus={true}
+                >
+                    <Gtk.Picture
+                        cssName="wallpaper-image"
+                        file={file}
+                        hexpand={true}
+                        vexpand={true}
+                        keepAspectRatio={true}
+                        contentFit={Gtk.ContentFit.COVER}
+                    />
+                    <label
+                        cssName="wallpaper-label"
+                        label={filenameShort}
+                        tooltipMarkup={metadata}
+                        wrap={true}
+                        wrap_mode={Pango.WrapMode.WORD_CHAR}
+                        max_width_chars={20}
+                        valign={Gtk.Align.END}
+                        halign={Gtk.Align.FILL}
+                    />
+                </box>
+            ) as Gtk.Widget;
 
-        const child = new Gtk.FlowBoxChild({
-            cssName: "wallpaper-thumbnail",
-            focusable: true,
-            canFocus: true,
+            const child = new Gtk.FlowBoxChild({
+                cssName: "wallpaper-thumbnail",
+                focusable: true,
+                canFocus: true,
+            });
+
+            child.set_child(tile);
+            flowbox.insert(child, -1);
+
+            const buttonGesture = new Gtk.GestureClick();
+            child.add_controller(buttonGesture);
+            buttonGesture.connect("pressed", () => SetWallpaper(originalFile));
+            child.connect("activate", () => SetWallpaper(originalFile));
+        }
+
+        // Refresh the FlowBox if thumbnails are still being generated.
+        if (missingThumbnail && thumbnailRefreshAttempts < 100) {
+            thumbnailRefreshAttempts++;
+            if (thumbnailRefreshId !== 0) {
+                GLib.source_remove(thumbnailRefreshId);
+            }
+            thumbnailRefreshId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
+                thumbnailRefreshId = 0;
+                rebuildGrid();
+                return GLib.SOURCE_REMOVE;
+            });
+        } else if (!missingThumbnail) {
+            thumbnailRefreshAttempts = 0;
+            thumbnailRefreshId = 0;
+        }
+
+        wallpaperSnapshot = names.join("\n");
+    };
+
+    const onThumbnailReady = (_thumbnailPath: string): void => {
+        rebuildGrid();
+    };
+    thumbnailReadyListeners.add(onThumbnailReady);
+
+    rebuildGrid();
+
+    const wallpaperDirectory = Gio.File.new_for_path(WALLPAPER_DIR);
+    const monitor = wallpaperDirectory.monitor_directory(
+        Gio.FileMonitorFlags.WATCH_MOVES,
+        null
+    );
+
+    monitor.connect("changed", (_monitor, changedFile, _otherFile, eventType) => {
+        if (eventType === Gio.FileMonitorEvent.CHANGED ||
+            eventType === Gio.FileMonitorEvent.CHANGES_DONE_HINT) {
+            const name = changedFile?.get_basename();
+            if (name) {
+                GLib.remove(WALLPAPER_DIR_CACHE + name);
+            }
+        }
+
+        if (debounceId !== 0) {
+            GLib.source_remove(debounceId);
+        }
+
+        debounceId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 200, () => {
+            debounceId = 0;
+            rebuildGrid();
+            return GLib.SOURCE_REMOVE;
         });
+    });
 
-        child.set_child(tile);
-        flowbox.insert(child, -1);
+    GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, () => {
+        const currentNames = getWallpaperNames();
+        const currentSnapshot = currentNames.join("\n");
+        if (currentSnapshot !== wallpaperSnapshot) {
+            rebuildGrid();
+        }
+        return GLib.SOURCE_CONTINUE;
+    });
 
-        const buttonGesture = new Gtk.GestureClick();
-        child.add_controller(buttonGesture);
-        buttonGesture.connect("pressed", () => SetWallpaper(originalFile));
-        child.connect("activate", () => SetWallpaper(originalFile));
-    }
+    wallpaperMonitors.add(monitor);
 
     return (
         <scrolledwindow child={flowbox} />
