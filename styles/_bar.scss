@@ -53,6 +53,50 @@ graphics-mode-container {
   color: $orange;
 }
 
+graphics-popover {
+  padding: 8px;
+  min-width: 220px;
+}
+
+graphics-detail-label {
+  color: $subtext1;
+  font-weight: bold;
+}
+
+graphics-detail-value {
+  color: $text;
+  text-transform: capitalize;
+}
+
+graphics-mode-divider {
+  min-height: 1px;
+  background-color: $surface1;
+  margin: 4px 0;
+}
+
+graphics-mode-row {
+  background: transparent;
+  border: none;
+  border-radius: $border-radius;
+  padding: 6px 8px;
+}
+
+graphics-mode-row:hover {
+  background-color: $surface0;
+}
+
+graphics-mode-row-active {
+  background-color: $surface1;
+}
+
+graphics-mode-label {
+  color: $text;
+}
+
+graphics-mode-check {
+  color: $green;
+}
+
 ethernet-container {
   background-color: $black;
   border-radius: $border-radius-circle;
