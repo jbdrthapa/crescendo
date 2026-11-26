@@ -20,6 +20,7 @@ import WidgetManager from "../WidgetManager";
 import { IdleWidget } from "./bar/IdleWidget";
 import { EthernetWidget } from "./bar/EthernetWidget";
 import { WirelessWidget } from "./bar/WirelessWidget";
+import { VolumeWidget } from "./bar/VolumeWidget";
 
 const windowName = WindowName.bar;
 
@@ -47,6 +48,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
     const ethernetWidget = EthernetWidget();
     const wirelessWidget = WirelessWidget();
     const batteryWidget = BatteryWidget();
+    const volumeWidget = VolumeWidget();
     const ipcService = IPCService.get_default();
     const idleService = IdleService.get_default();
 
@@ -104,6 +106,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
                     {idleWidget}
                     {ethernetWidget}
                     {wirelessWidget}
+                    {volumeWidget}
                     {batteryWidget}
                 </box>
             </box>

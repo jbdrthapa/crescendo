@@ -150,3 +150,80 @@ wireless-copy-icon {
   color: $overlay1;
   margin-left: 4px;
 }
+
+volume-button {
+  background-color: $black;
+  border-radius: $border-radius-circle;
+  border: 1px solid $surface1;
+  min-width: 46px;
+  min-height: 25px;
+}
+
+volume-button-icon {
+  font-size: 16px;
+  color: $subtext1;
+}
+
+volume-popover {
+  padding: 10px;
+  min-width: 300px;
+}
+
+volume-control-section {
+  padding: 2px 0;
+}
+
+volume-control-icon {
+  color: $subtext1;
+}
+
+volume-control-title {
+  color: $text;
+  font-weight: 700;
+}
+
+volume-control-percent {
+  color: $subtext1;
+  font-size: 14px;
+  min-width: 42px;
+}
+
+volume-device-name {
+  color: $subtext1;
+  font-size: 13px;
+}
+
+volume-section-label {
+  color: $overlay1;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+volume-device-row {
+  background: transparent;
+  border: none;
+  border-radius: $border-radius;
+  padding: 5px 6px;
+}
+
+volume-device-row:hover {
+  background-color: $surface0;
+}
+
+volume-device-row-name {
+  color: $text;
+  font-size: 13px;
+}
+
+volume-device-active {
+  color: $green;
+  font-size: 13px;
+}
+
+volume-popover-divider {
+  min-height: 1px;
+  background-color: $surface1;
+  margin: 2px 0;
+}
