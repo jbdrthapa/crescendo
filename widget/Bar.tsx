@@ -103,6 +103,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
                 </box>
                 <box cssName="bar-end" orientation={Gtk.Orientation.VERTICAL} spacing={6} halign={Gtk.Align.CENTER} valign={Gtk.Align.END} widthRequest={46} hexpand={false}>
                     {trayWidget}
+                    {kdeConnectWidget}
                     {powerProfileWidget}
                     {graphicsWidget}
                     {idleWidget}
@@ -110,9 +111,8 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
                     {wirelessWidget}
                     {volumeWidget}
                     {batteryWidget}
-                    {kdeConnectWidget}
                 </box>
-            </box>3
+            </box>
         </window>
 
     ) as Astal.Window;

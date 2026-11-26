@@ -1,5 +1,6 @@
 import Gtk from "gi://Gtk?version=4.0"
 import GLib from "gi://GLib?version=2.0"
+import Gio from "gi://Gio"
 import { createState, onCleanup, For } from "ags"
 import { createComputed } from "gnim"
 import { execAsync } from "ags/process"
@@ -36,11 +37,33 @@ export function KDEConnectWidget() {
     }
   }
 
-  const readInt = (text: string): number | null => {
-    const match = text.match(/(?:^|[^0-9])(-?\d+)(?:[^0-9]|$)/)
-    if (!match) return null
-    const value = Number(match[1])
-    return Number.isFinite(value) ? value : null
+  const gdbusPropertyWithInterface = async (objectPath: string, interfaceName: string, property: string) => {
+    try {
+      const result = await execAsync([
+        "gdbus", "call", "--session",
+        "--dest", "org.kde.kdeconnect",
+        "--object-path", objectPath,
+        "--method", "org.freedesktop.DBus.Properties.Get",
+        interfaceName, property,
+      ])
+      return String(result)
+    } catch {
+      return ""
+    }
+  }
+
+  const gdbusMethod = async (objectPath: string, interfaceName: string, method: string, args: string[] = []) => {
+    try {
+      await execAsync([
+        "gdbus", "call", "--session",
+        "--dest", "org.kde.kdeconnect",
+        "--object-path", objectPath,
+        "--method", `${interfaceName}.${method}`,
+        ...args,
+      ])
+    } catch (error) {
+      print(`KDE Connect ${method} failed: ${error}`)
+    }
   }
 
   const refresh = async () => {
@@ -62,14 +85,14 @@ export function KDEConnectWidget() {
         let charging = false
 
         try {
-          const nameOutput = await execAsync(["kdeconnect-cli", "-d", id, "--name"])
-          name = String(nameOutput).replace(/^.*?:\s*/, "").trim() || id
+          const nameText = await gdbusDeviceProperty(id, "name")
+          const nameMatch = nameText.match(/['"]([^'"]+)['"]/)
+          name = nameMatch?.[1] || id
         } catch {}
 
         try {
-          const statusOutput = await execAsync(["kdeconnect-cli", "-d", id, "--show-device"])
-          const status = String(statusOutput)
-          reachable = /reachable|paired/i.test(status) && !/not reachable|is reachable: no/i.test(status)
+          const reachableText = await gdbusDeviceProperty(id, "isReachable")
+          reachable = /true/i.test(reachableText)
         } catch {
           reachable = true
         }
@@ -101,25 +124,44 @@ export function KDEConnectWidget() {
 
   onCleanup(() => GLib.source_remove(timer))
 
-  const firstDevice = () => devices()[0]
-  const firstBattery = () => firstDevice()?.battery
-  const iconName = () => {
-    const value = firstBattery()
-    if (value == null) return "phone-symbolic"
-    if (value <= 20) return "battery-level-20-symbolic"
-    if (value <= 40) return "battery-level-40-symbolic"
-    if (value <= 60) return "battery-level-60-symbolic"
-    if (value <= 80) return "battery-level-80-symbolic"
-    return "battery-level-100-symbolic"
-  }
+  const hasReachableDevice = () => devices().some((device) => device.reachable)
 
   const tooltip = () => {
+    if (!serviceAvailable()) return "KDE Connect unavailable"
     const list = devices()
-    if (!list.length) return "No KDE Connect devices"
+    if (!list.length) return "KDE Connect\nNo paired devices"
     return list.map((device) => {
-      const battery = device.battery == null ? "Battery unknown" : `${device.battery}%${device.charging ? " • charging" : ""}`
-      return `${device.name} — ${device.reachable ? "Connected" : "Unavailable"} — ${battery}`
-    }).join("\n")
+      const battery = device.battery == null ? "Unknown" : `${device.battery}%${device.charging ? " (charging)" : ""}`
+      return `${device.name}\nStatus: ${device.reachable ? "Connected" : "Unavailable"}\nBattery: ${battery}`
+    }).join("\n\n")
+  }
+
+  const openReceivedFiles = () => {
+    const downloads = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOWNLOAD)
+      || `${GLib.get_home_dir()}/Downloads`
+    run(["xdg-open", downloads])
+  }
+
+  const shareFile = (device: KDEDevice) => {
+    const dialog = new Gtk.FileDialog({ title: `Send file to ${device.name}` })
+    dialog.open(null, null, (_dialog, result) => {
+      try {
+        const file = dialog.open_finish(result)
+        const path = file.get_path()
+        if (path) {
+          run(["kdeconnect-cli", "-d", device.id, "--share", path])
+          execAsync([
+            "notify-send",
+            "KDE Connect — sending file",
+            `${GLib.path_get_basename(path)}\nSending to ${device.name}`,
+            "--app-name=KDE Connect",
+            "--icon=folder-upload",
+          ]).catch((error) => print(`KDE Connect notification failed: ${error}`))
+        }
+      } catch (error) {
+        print(`File selection cancelled or failed: ${error}`)
+      }
+    })
   }
 
   const deviceRow = (device: KDEDevice) => (
@@ -152,9 +194,53 @@ export function KDEConnectWidget() {
         }}>
           <label label="󰆏" />
         </button>
+        <button cssName="kdeconnect-action" tooltipText="Open received files" onClicked={() => openReceivedFiles()}>
+          <label label="󰈞" />
+        </button>
+        <button cssName="kdeconnect-action" tooltipText="Send file" onClicked={() => shareFile(device)}>
+          <label label="󰈙" />
+        </button>
       </box>
     </box>
   )
+
+  let shareSubscription: number | null = null
+  let shareConnection: Gio.DBusConnection | null = null
+
+  try {
+    shareConnection = Gio.bus_get_sync(Gio.BusType.SESSION, null)
+    shareSubscription = shareConnection.signal_subscribe(
+      "org.kde.kdeconnect",
+      "org.kde.kdeconnect.device.share",
+      "shareReceived",
+      null,
+      null,
+      Gio.DBusSignalFlags.NONE,
+      (_connection, _sender, objectPath, _interfaceName, _signalName, parameters) => {
+        const url = parameters.get_child_value(0).get_string()[0] || ""
+        let filePath = url
+        if (url.startsWith("file://")) {
+          try {
+            filePath = GLib.filename_from_uri(url)[0] || url
+          } catch {}
+        }
+        const fileName = GLib.path_get_basename(filePath) || "File"
+        const downloads = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOWNLOAD)
+          || `${GLib.get_home_dir()}/Downloads`
+        const deviceId = objectPath?.split("/")[4] || ""
+        const device = devices().find((item) => item.id === deviceId)
+        execAsync([
+          "notify-send",
+          "KDE Connect — file received",
+          `${fileName}\nSaved in ${downloads}`,
+          "--app-name=KDE Connect",
+          "--icon=folder-download",
+        ]).catch((error) => print(`KDE Connect notification failed: ${error}`))
+      }
+    )
+  } catch (error) {
+    print(`Could not subscribe to KDE Connect file notifications: ${error}`)
+  }
 
   return (
     <box
@@ -162,19 +248,9 @@ export function KDEConnectWidget() {
         const popover = new Gtk.Popover({ has_arrow: true, position: Gtk.PositionType.LEFT })
         popover.set_parent(self)
 
-        const smsRecipient = new Gtk.Entry({ placeholder_text: "Phone number", hexpand: true })
-        const smsMessage = new Gtk.Entry({ placeholder_text: "Message", hexpand: true })
-        const sendSms = (device: KDEDevice) => {
-          const destination = smsRecipient.text.trim()
-          const message = smsMessage.text.trim()
-          if (!destination || !message) return
-          run(["kdeconnect-cli", "-d", device.id, "--send-sms", "--destination", destination, "--message", message])
-          smsMessage.text = ""
-        }
-
         const content = (
           <box cssName="kdeconnect-popover" orientation={Gtk.Orientation.VERTICAL} spacing={8}>
-            <label label="KDE Connect" cssName="kdeconnect-title" xalign={0} />
+            <label label="Mobile Connect" cssName="kdeconnect-title" xalign={0} />
             <label
               label="Install KDE Connect: pacman -S kdeconnect"
               cssName="kdeconnect-status-offline"
@@ -191,21 +267,6 @@ export function KDEConnectWidget() {
               <For each={devices}>{(device) => deviceRow(device)}</For>
             </box>
             <box cssName="kdeconnect-divider" />
-            <label label="Send SMS" cssName="kdeconnect-section-label" xalign={0} />
-            <box orientation={Gtk.Orientation.VERTICAL} spacing={4}>
-              {smsRecipient}
-              {smsMessage}
-              <button
-                cssName="kdeconnect-send-button"
-                onClicked={() => {
-                  const device = firstDevice()
-                  if (device) sendSms(device)
-                }}
-                sensitive={devices.as((list) => list.some((device) => device.reachable))}
-              >
-                <label label="Send message" />
-              </button>
-            </box>
             <button cssName="kdeconnect-refresh" onClicked={refresh}>
               <label label="Refresh devices" />
             </button>
@@ -220,17 +281,51 @@ export function KDEConnectWidget() {
         })
         self.add_controller(gesture)
 
-        onCleanup(() => popover.unparent())
+        onCleanup(() => {
+          popover.unparent()
+          if (shareSubscription && shareConnection) {
+            try {
+              shareConnection.signal_unsubscribe(shareSubscription)
+            } catch (error) {
+              print(`Could not unsubscribe from KDE Connect file notifications: ${error}`)
+            }
+          }
+        })
       }}
       cssName="kdeconnect-container"
+      halign={Gtk.Align.CENTER}
+      hexpand={false}
       tooltipText={createComputed(() => tooltip())}
       visible={visible}
     >
-      <image iconName={createComputed(() => iconName())} cssName="kdeconnect-icon" />
       <label
-        label={devices.as((list) => list.length === 1 && list[0].battery != null ? `${list[0].battery}%` : `${list.length}`)}
-        cssName="kdeconnect-battery-label"
+        label=""
+        cssName={createComputed(() => hasReachableDevice() ? "kdeconnect-icon-connected" : "kdeconnect-icon")}
+        halign={Gtk.Align.CENTER}
+        hexpand={true}
       />
     </box>
   )
+}
+
+const readInt = (text: string): number | null => {
+  const match = text.match(/(?:^|[^0-9])(-?\d+)(?:[^0-9]|$)/)
+  if (!match) return null
+  const value = Number(match[1])
+  return Number.isFinite(value) ? value : null
+}
+
+const gdbusDeviceProperty = async (id: string, property: string) => {
+  try {
+    const result = await execAsync([
+      "gdbus", "call", "--session",
+      "--dest", "org.kde.kdeconnect",
+      "--object-path", `/modules/kdeconnect/devices/${id}`,
+      "--method", "org.freedesktop.DBus.Properties.Get",
+      "org.kde.kdeconnect.device", property,
+    ])
+    return String(result)
+  } catch {
+    return ""
+  }
 }
