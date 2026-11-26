@@ -190,7 +190,10 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
     const leftClickGesture = new Gtk.GestureClick();
     leftClickGesture.set_button(1);
     leftClickGesture.connect("released", () => {
-        CloseAllMenus(settings, modulesRight, desktopMenu);
+        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+            CloseAllMenus(settings, modulesRight, desktopMenu);
+            return GLib.SOURCE_REMOVE;
+        });
     });
     desktopClickButton.add_controller(leftClickGesture);
 

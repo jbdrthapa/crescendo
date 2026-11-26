@@ -15,7 +15,6 @@ export function DesktopMenu() {
         namespace: windowName,
         anchor: Astal.WindowAnchor.TOP | Astal.WindowAnchor.LEFT,
         application: app,
-        closeOnFocusChange: false,
         child: (
             <box orientation={Gtk.Orientation.VERTICAL}>
                 <button

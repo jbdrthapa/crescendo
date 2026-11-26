@@ -91,7 +91,7 @@ export default GObject.registerClass(
       this.openState = true;
       this.timers.clear();
       this.suppressFocusClose = true;
-      this.timers.once(500, () => {
+      this.timers.once(100, () => {
         this.suppressFocusClose = false;
       });
       this.set_visible(true);
