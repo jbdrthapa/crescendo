@@ -19,10 +19,6 @@ tray-module-button>button {
   transform: scale(1);
 }
 
-tray-module-button:hover {
-  transform: scale(1.25);
-}
-
 tray-module-button-image {
   background-color: transparent;
   color: $subtext1;
