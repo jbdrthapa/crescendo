@@ -7,5 +7,6 @@ export const WindowName = {
     osd: "crescendo-osd",
     desktopMenu: "crescendo-desktopmenu",
     lockScreen: "crescendo-lockscreen",
-    powerOptions: "crescendo-poweroptions"
+    powerOptions: "crescendo-poweroptions",
+    desktopClick: "crescendo-desktop-click",
 } as const;

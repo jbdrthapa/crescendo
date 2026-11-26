@@ -18,7 +18,7 @@ export default GObject.registerClass(
     private suppressFocusClose = false;
 
     constructor(props: any & { child: Gtk.Widget }) {
-      const { name, child, ...rest } = props;
+      const { name, child, closeOnFocusChange = true, ...rest } = props;
 
       super({
         ...rest,
@@ -57,14 +57,14 @@ export default GObject.registerClass(
       });
 
       this.niri.connect("window-focus-changed", (_niri, windowId: number) => {
-        if (!this.openState || this.suppressFocusClose) return;
+        if (!closeOnFocusChange || !this.openState || this.suppressFocusClose) return;
         this.hide_all();
       });
     }
 
     hide_others() {
       app.get_windows().forEach((window) => {
-        if (window !== this && window.name !== "bar-background") {
+        if (window !== this && window.name !== "bar-background" && window.name !== "crescendo-desktop-click") {
           const popup = window as typeof window & { hide_all?: () => void };
           if (typeof popup.hide_all === "function") {
             popup.hide_all();

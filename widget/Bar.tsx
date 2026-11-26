@@ -84,7 +84,12 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
 
     // Invisible backdrop window for click detection
     const backdropButton = (
-        <button cssName="invisible-backdrop" css={wallpaperCss} />
+        <button
+            cssName="invisible-backdrop"
+            css={wallpaperCss}
+            hexpand={true}
+            vexpand={true}
+        />
     ) as Gtk.Button;
 
     const backdrop = (
@@ -92,6 +97,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
             name={windowName}
             namespace={windowName}
             layer={Astal.Layer.BACKGROUND}
+            exclusivity={Astal.Exclusivity.IGNORE}
             visible={true}
             anchor={
                 Astal.WindowAnchor.TOP |
@@ -103,6 +109,41 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
             cssName={"invisible-backdrop-window"}
         >
             {backdropButton}
+        </window>
+    ) as Astal.Window;
+
+    // Transparent Bottom-layer window dedicated to desktop pointer gestures.
+    const desktopClickButton = (
+        <button
+            cssName="invisible-backdrop"
+            hexpand={true}
+            vexpand={true}
+        />
+    ) as Gtk.Button;
+
+    const desktopClickGeometry = gdkmonitor.get_geometry();
+
+    const desktopClickSurface = (
+        <window
+            name={WindowName.desktopClick}
+            namespace={WindowName.desktopClick}
+            layer={Astal.Layer.BOTTOM}
+            exclusivity={Astal.Exclusivity.IGNORE}
+            visible={true}
+            anchor={
+                Astal.WindowAnchor.TOP |
+                Astal.WindowAnchor.BOTTOM |
+                Astal.WindowAnchor.LEFT |
+                Astal.WindowAnchor.RIGHT
+            }
+            application={app}
+            cssName={"invisible-backdrop-window"}
+            gdkmonitor={gdkmonitor}
+            widthRequest={desktopClickGeometry.width}
+            heightRequest={desktopClickGeometry.height}
+            css={"background: rgba(0, 0, 0, 0.001); background-image: none;"}
+        >
+            {desktopClickButton}
         </window>
     ) as Astal.Window;
 
@@ -148,23 +189,23 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
     // Backdrop click gestures
     const leftClickGesture = new Gtk.GestureClick();
     leftClickGesture.set_button(1);
-    leftClickGesture.connect("pressed", () => {
+    leftClickGesture.connect("released", () => {
         CloseAllMenus(settings, modulesRight, desktopMenu);
     });
-    backdropButton.add_controller(leftClickGesture);
+    desktopClickButton.add_controller(leftClickGesture);
 
     const rightClickGesture = new Gtk.GestureClick();
     rightClickGesture.set_button(3);
 
     const offset = 8;
 
-    rightClickGesture.connect("pressed", (_controller, _n, x, y) => {
+    rightClickGesture.connect("released", (_controller, _n, x, y) => {
         desktopMenu.marginLeft = x + offset;
         desktopMenu.marginTop = y + offset;
-        desktopMenu.toggle();
+        desktopMenu.forceOpen();
     });
 
-    backdropButton.add_controller(rightClickGesture);
+    desktopClickButton.add_controller(rightClickGesture);
 
     // Clicking empty areas of the bar closes open popups.
     // Deferred handling allows bar button gestures to suppress this close.
@@ -182,6 +223,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
 
     // Register windows with main app
     app.add_window(backdrop);
+    app.add_window(desktopClickSurface);
     app.add_window(modulesRight.popup);
     app.add_window(desktopMenu);
     app.add_window(settings);

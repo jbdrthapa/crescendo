@@ -10,11 +10,12 @@ const windowName = WindowName.desktopMenu;
 export function DesktopMenu() {
     const settings = WidgetManager.GetSettingsWindow();
 
-    return new PopupWindow({
+    const menu = new PopupWindow({
         name: windowName,
         namespace: windowName,
         anchor: Astal.WindowAnchor.TOP | Astal.WindowAnchor.LEFT,
         application: app,
+        closeOnFocusChange: false,
         child: (
             <box orientation={Gtk.Orientation.VERTICAL}>
                 <button
@@ -56,4 +57,13 @@ export function DesktopMenu() {
             </box>
         ),
     });
+
+    const rightClickGesture = new Gtk.GestureClick();
+    rightClickGesture.set_button(3);
+    rightClickGesture.connect("released", () => {
+        menu.hide_all();
+    });
+    menu.add_controller(rightClickGesture);
+
+    return menu;
 }
