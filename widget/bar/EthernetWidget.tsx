@@ -184,7 +184,7 @@ export function EthernetWidget() {
             $={(self: Gtk.Box) => {
                 const popover = new Gtk.Popover({
                     has_arrow: true,
-                    position: Gtk.PositionType.BOTTOM,
+                    position: Gtk.PositionType.LEFT,
                 });
                 popover.set_parent(self);
 
