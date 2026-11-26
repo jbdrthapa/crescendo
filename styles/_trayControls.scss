@@ -1,26 +1,22 @@
 @use "theme" as *;
 
 tray-module-container {
-  background-color: $base-transparent;
+  background-color: $crust-transparent;
   border-radius: $border-radius-circle;
-  border: 2px solid $surface2;
-  padding-left: 12px;
-  padding-right: 12px;
+  border: 1px dashed $surface1;
+  padding: 8px 8px;
 }
 
 tray-module-button {
   border-radius: $border-radius;
   transition: transform 340ms cubic-bezier(.33, 1, .68, 1);
-  min-width: 40px;
+  min-width: 22px;
+  min-height: 22px;
 }
 
 tray-module-button>button {
   background-color: transparent;
   transform: scale(1);
-}
-
-tray-module-button:hover {
-  transform: scale(1.25);
 }
 
 tray-module-button-image {

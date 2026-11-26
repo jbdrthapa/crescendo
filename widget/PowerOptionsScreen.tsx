@@ -4,6 +4,7 @@ import app from "ags/gtk4/app";
 import { Astal } from "ags/gtk4";
 import { WindowName } from "../constants";
 import { createState } from "gnim";
+import { TimerManager } from "../TimerManager";
 
 const windowName = WindowName.powerOptions;
 
@@ -11,6 +12,7 @@ export function PowerOptionsScreen() {
 
 
     const [reveal, setReveal] = createState(true);
+    const timers = new TimerManager();
 
     const revealerWidget = (
         <revealer
@@ -22,7 +24,7 @@ export function PowerOptionsScreen() {
             cssName="power-options-background"
 
             $={() => {
-                setTimeout(() => setReveal(true), 10);
+                timers.once(10, () => setReveal(true));
             }}
         >
             <box vexpand={true} hexpand={true} valign={Gtk.Align.START} halign={Gtk.Align.CENTER} orientation={Gtk.Orientation.VERTICAL} spacing={20} marginTop={60}>
@@ -86,7 +88,7 @@ export function PowerOptionsScreen() {
 
         setReveal(false);
 
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
+        timers.once(1000, () => {
             powerOptionsWindow.hide();
 
             if (cmd) {
@@ -94,8 +96,6 @@ export function PowerOptionsScreen() {
             }
 
             setReveal(true);
-
-            return GLib.SOURCE_REMOVE;
         });
     }
 

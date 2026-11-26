@@ -1,6 +1,7 @@
 import GObject from "gi://GObject";
 import { execAsync } from "ags/process";
 import GLib from "gi://GLib";
+import { TimerManager } from "../TimerManager";
 
 let displayDevice: null | string = null;
 let devicePath: null | string = null;
@@ -44,7 +45,7 @@ const DisplayServiceProperties = {
     )
 };
 
-const checkTimer = 0.25 * 1000;
+const checkTimer = 1000;
 
 class InternalDisplayService extends GObject.Object {
     static instance: InternalDisplayService;
@@ -61,6 +62,7 @@ class InternalDisplayService extends GObject.Object {
     private last_display_mode = "";
     private display_mode = "";
     private adjustment_value = 5;
+    private readonly timers = new TimerManager();
 
     constructor() {
         super();
@@ -98,9 +100,9 @@ class InternalDisplayService extends GObject.Object {
 
         this.updateDisplayMode();
 
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, checkTimer, () => {
+        this.timers.repeat(checkTimer, () => {
             this.updateBrightnessPercent();
-            return GLib.SOURCE_CONTINUE;
+            return true;
         });
 
         return true;
@@ -372,4 +374,4 @@ class InternalDisplayService extends GObject.Object {
 }
 
 
-export default GObject.registerClass({ Properties: DisplayServiceProperties, }, InternalDisplayService);
+export default GObject.registerClass({ Properties: DisplayServiceProperties }, InternalDisplayService) as unknown as typeof InternalDisplayService;

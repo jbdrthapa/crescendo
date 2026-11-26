@@ -1,0 +1,95 @@
+@use "theme" as *;
+
+kdeconnect-container {
+  background-color: $black;
+  border-radius: $border-radius-circle;
+  border: 1px solid $surface1;
+  min-height: 25px;
+  padding: 0 5px;
+  min-width: 32px;
+}
+
+kdeconnect-icon,
+kdeconnect-icon-connected {
+  font-size: 18px;
+  min-width: 24px;
+  min-height: 24px;
+  color: $subtext1;
+}
+
+kdeconnect-icon-connected {
+  color: $green;
+}
+
+kdeconnect-battery-label {
+  font-size: 10px;
+  color: $text;
+}
+
+kdeconnect-popover {
+  padding: 10px;
+  min-width: 300px;
+}
+
+kdeconnect-title {
+  font-size: 15px;
+  font-weight: bold;
+  color: $text;
+}
+
+kdeconnect-section-label {
+  color: $subtext1;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+kdeconnect-device-list,
+kdeconnect-device-row {
+  margin: 0;
+}
+
+kdeconnect-device-row {
+  border-radius: $border-radius;
+  padding: 8px;
+  background-color: $surface0;
+}
+
+kdeconnect-device-name {
+  color: $text;
+  font-weight: bold;
+}
+
+kdeconnect-battery {
+  color: $green;
+}
+
+kdeconnect-status-connected {
+  color: $green;
+  font-size: 11px;
+}
+
+kdeconnect-status-offline {
+  color: $red;
+  font-size: 11px;
+}
+
+kdeconnect-action,
+kdeconnect-send-button,
+kdeconnect-refresh {
+  border: none;
+  border-radius: $border-radius;
+  background-color: $surface1;
+  color: $text;
+  padding: 6px;
+}
+
+kdeconnect-action:hover,
+kdeconnect-send-button:hover,
+kdeconnect-refresh:hover {
+  background-color: $surface2;
+}
+
+kdeconnect-divider {
+  min-height: 1px;
+  background-color: $surface1;
+}

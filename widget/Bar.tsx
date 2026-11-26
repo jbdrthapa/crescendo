@@ -1,6 +1,7 @@
 import app from "ags/gtk4/app";
 import Gtk from "gi://Gtk?version=4.0";
 import { Astal, Gdk } from "ags/gtk4";
+import GLib from "gi://GLib";
 
 import { ModulesCenter } from "./modules-center/ModulesCenter";
 import { ModulesLeft } from "./modules-left/ModulesLeft";
@@ -17,6 +18,10 @@ import IPCService from "../services/IPCService";
 import IdleService from "../services/IdleService";
 import WidgetManager from "../WidgetManager";
 import { IdleWidget } from "./bar/IdleWidget";
+import { EthernetWidget } from "./bar/EthernetWidget";
+import { WirelessWidget } from "./bar/WirelessWidget";
+import { VolumeWidget } from "./bar/VolumeWidget";
+import { KDEConnectWidget } from "./bar/KDEConnectWidget";
 
 const windowName = WindowName.bar;
 
@@ -27,23 +32,27 @@ function CloseAllMenus(settings: any, modulesRight: any, desktopMenu: any) {
 }
 
 export default function Bar(gdkmonitor: Gdk.Monitor) {
-    const { TOP, LEFT, RIGHT } = Astal.WindowAnchor;
+    const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor;
 
     // Create ALL widgets INSIDE Bar() — never at module top-level
-    const modulesLeft = new ModulesLeft();
-    const modulesCenter = new ModulesCenter();
-    const modulesRight = new ModulesRight();
+    const modulesLeft = ModulesLeft();
+    const modulesCenter = ModulesCenter();
+    const modulesRight = ModulesRight();
     const settings = WidgetManager.GetSettingsWindow();
-    const dock = new Dock();
+    const dock = Dock();
     const desktopMenu = DesktopMenu();
     const workspaceWidget = WorkspaceWidget();
     const trayWidget = TrayWidget();
     const powerProfileWidget = PowerProfileWidget();
     const graphicsWidget = GraphicsWidget();
     const idleWidget = IdleWidget();
+    const ethernetWidget = EthernetWidget();
+    const wirelessWidget = WirelessWidget();
     const batteryWidget = BatteryWidget();
-    const ipcService = new IPCService();
-    const idleService = new IdleService();
+    const volumeWidget = VolumeWidget();
+    const kdeConnectWidget = KDEConnectWidget();
+    const ipcService = IPCService.get_default();
+    const idleService = IdleService.get_default();
 
     // Invisible backdrop window for click detection
     const backdropButton = (
@@ -79,66 +88,69 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
             gdkmonitor={gdkmonitor}
             exclusivity={Astal.Exclusivity.EXCLUSIVE}
             layer={Astal.Layer.TOP}
-            anchor={TOP | LEFT | RIGHT}
+            anchor={TOP | RIGHT | BOTTOM}
             application={app}
         >
-            <centerbox cssName="bar" vexpand={true}>
-                <box $type="start" spacing={5} vexpand={true} valign={Gtk.Align.CENTER}>
+            <box cssName="bar" orientation={Gtk.Orientation.VERTICAL} vexpand={true} hexpand={false} spacing={6}>
+                <box cssName="bar-start" orientation={Gtk.Orientation.VERTICAL} spacing={6} halign={Gtk.Align.CENTER} valign={Gtk.Align.START}>
+                    {modulesRight}
                     {modulesLeft}
+                    {workspaceWidget}
                     {dock}
                 </box>
-                <box $type="center" vexpand={true} valign={Gtk.Align.CENTER}>
+                <box cssName="bar-center" orientation={Gtk.Orientation.VERTICAL} vexpand={true} valign={Gtk.Align.CENTER} halign={Gtk.Align.CENTER}>
                     {modulesCenter}
                 </box>
-                <box $type="end" spacing={5} vexpand={true} valign={Gtk.Align.CENTER}>
-                    {workspaceWidget}
+                <box cssName="bar-end" orientation={Gtk.Orientation.VERTICAL} spacing={6} halign={Gtk.Align.CENTER} valign={Gtk.Align.END} widthRequest={46} hexpand={false}>
                     {trayWidget}
+                    {kdeConnectWidget}
                     {powerProfileWidget}
                     {graphicsWidget}
                     {idleWidget}
+                    {ethernetWidget}
+                    {wirelessWidget}
+                    {volumeWidget}
                     {batteryWidget}
-                    {modulesRight}
                 </box>
-            </centerbox>
+            </box>
         </window>
 
     ) as Astal.Window;
 
     // Backdrop click gestures
-    const backdropButtonGesture = new Gtk.GestureClick();
-    backdropButtonGesture.set_button(0);
+    const leftClickGesture = new Gtk.GestureClick();
+    leftClickGesture.set_button(1);
+    leftClickGesture.connect("pressed", () => {
+        CloseAllMenus(settings, modulesRight, desktopMenu);
+    });
+    backdropButton.add_controller(leftClickGesture);
+
+    const rightClickGesture = new Gtk.GestureClick();
+    rightClickGesture.set_button(3);
 
     const offset = 8;
 
-    backdropButtonGesture.connect("pressed", (controller, _n, x, y) => {
-        const button = controller.get_current_button();
-
-        if (button === 1) {
-            CloseAllMenus(settings, modulesRight, desktopMenu);
-        } else if (button === 3) {
-            desktopMenu.marginLeft = x + offset;
-            desktopMenu.marginTop = y + offset;
-            desktopMenu.toggle();
-        }
+    rightClickGesture.connect("pressed", (_controller, _n, x, y) => {
+        desktopMenu.marginLeft = x + offset;
+        desktopMenu.marginTop = y + offset;
+        desktopMenu.toggle();
     });
 
-    backdropButton.add_controller(backdropButtonGesture);
+    backdropButton.add_controller(rightClickGesture);
 
-    // Clicking the bar hides other windows
+    // Clicking empty areas of the bar closes open popups.
+    // Deferred handling allows bar button gestures to suppress this close.
     const barGesture = new Gtk.GestureClick();
+    barGesture.set_button(1);
     barGesture.connect("pressed", () => {
-        hide_others();
-    });
-
-    barWindow.add_controller(barGesture);
-
-    function hide_others() {
-        app.get_windows().forEach(window => {
-            if (window !== barWindow && window.name !== "bar-background") {
-                window.hide()
+        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 10, () => {
+            if (!WidgetManager.ConsumeNextBarClose()) {
+                CloseAllMenus(settings, modulesRight, desktopMenu);
             }
+            return GLib.SOURCE_REMOVE;
         });
-    }
+    });
+    barWindow.add_controller(barGesture);
 
     // Register windows with main app
     app.add_window(backdrop);

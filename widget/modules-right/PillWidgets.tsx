@@ -6,9 +6,8 @@ import { WirelessNetworkWidget } from "./WirelessNetworkWidget";
 import { VPNWidget } from "./VPNWidget";
 import { AccordionController } from "./AccordionController";
 
-const accordion = new AccordionController();
-
 export function PillWidgets() {
+    const accordion = new AccordionController();
 
     const displayWidget = DisplayWidget(accordion);
     const bluetoothWidget = BluetoothWidget(accordion);

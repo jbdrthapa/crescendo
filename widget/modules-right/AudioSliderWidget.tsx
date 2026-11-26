@@ -3,6 +3,7 @@ import Gtk from "gi://Gtk?version=4.0";
 import { createBinding } from "gnim";
 import { SliderAccordionController } from "./SliderAccordionController";
 import { execAsync } from "ags/process";
+import { TimerManager } from "../../TimerManager";
 
 export function AudioSliderWidget({
     id,
@@ -17,6 +18,7 @@ export function AudioSliderWidget({
 }) {
 
     let soundCooldown = false;
+    const timers = new TimerManager();
 
     function playVolumeSound() {
         if (soundCooldown) return;
@@ -24,9 +26,9 @@ export function AudioSliderWidget({
         execAsync(['canberra-gtk-play', '--id=audio-volume-change'])
             .catch(err => console.error(err))
             .finally(() => {
-                setTimeout(() => {
+                timers.once(5, () => {
                     soundCooldown = false;
-                }, 5);
+                });
             });
     }
 
@@ -54,6 +56,7 @@ export function AudioSliderWidget({
                 if (v <= 1.0) return "audio-input-microphone-high-symbolic";
                 return "audio-input-microphone-high-symbolic";
             }
+            return "audio-volume-high-symbolic";
         });
 
         const volumeText = volume.as(v => String(Math.trunc(v * 100)));

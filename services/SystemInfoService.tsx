@@ -3,6 +3,7 @@ import { execAsync } from "ags/process";
 import GLib from "gi://GLib";
 import Gio from "gi://Gio";
 import Auth from "gi://AstalAuth"
+import { TimerManager } from "../TimerManager";
 
 const SystemInfoServiceProperties = {
     'host-info': GObject.ParamSpec.string(
@@ -50,6 +51,9 @@ class InternalSystemInfoService extends GObject.Object {
     uptime_info = '';
     avatar = '';
     auth_message = '';
+    private readonly timers = new TimerManager();
+    private hostnameRefreshInProgress = false;
+    private uptimeRefreshInProgress = false;
 
     constructor() {
         super();
@@ -60,32 +64,46 @@ class InternalSystemInfoService extends GObject.Object {
 
         this.updateUserAvatar();
 
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, hostnameTimer, () => {
+        this.timers.repeat(hostnameTimer, () => {
             this.updateHostname();
-            return GLib.SOURCE_CONTINUE;
+            return true;
         });
 
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, uptimeTimer, () => {
+        this.timers.repeat(uptimeTimer, () => {
             this.updateUptime();
-            return GLib.SOURCE_CONTINUE;
+            return true;
         });
 
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, avatarUpdateTimer, () => {
+        this.timers.repeat(avatarUpdateTimer, () => {
             this.updateUserAvatar();
-            return GLib.SOURCE_CONTINUE;
+            return true;
         });
     }
 
     updateHostname() {
+        if (this.hostnameRefreshInProgress) {
+            return;
+        }
+        this.hostnameRefreshInProgress = true;
+
         execAsync(['hostnamectl', 'hostname']).then((hostname) => {
             this.host_info = hostname;
-        }).catch(print);
+        }).catch(print).finally(() => {
+            this.hostnameRefreshInProgress = false;
+        });
     }
 
     updateUptime() {
+        if (this.uptimeRefreshInProgress) {
+            return;
+        }
+        this.uptimeRefreshInProgress = true;
+
         execAsync(['uptime', '-p']).then((uptime) => {
             this.uptime_info = uptime;
-        }).catch(print);
+        }).catch(print).finally(() => {
+            this.uptimeRefreshInProgress = false;
+        });
     }
 
     updateUserAvatar() {
@@ -118,13 +136,10 @@ class InternalSystemInfoService extends GObject.Object {
                 this.auth_message = message;
                 this.notify("auth-message");
 
-                GLib.timeout_add(GLib.PRIORITY_DEFAULT, 800, () => {
+                this.timers.once(800, () => {
                     this.auth_message = "";
                     this.notify("auth-message");
-
                     onSuccess();
-
-                    return GLib.SOURCE_REMOVE;
                 });
 
 
@@ -134,10 +149,9 @@ class InternalSystemInfoService extends GObject.Object {
                 this.auth_message = message;
                 this.notify("auth-message");
 
-                GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
+                this.timers.once(1000, () => {
                     this.auth_message = "";
                     this.notify("auth-message");
-                    return GLib.SOURCE_REMOVE;
                 });
             }
         })

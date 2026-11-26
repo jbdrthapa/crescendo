@@ -4,6 +4,7 @@ import { Astal } from "ags/gtk4";
 import AstalNiri from "gi://AstalNiri";
 import GObject from "gnim/gobject";
 import app from "ags/gtk4/app";
+import { TimerManager } from "../TimerManager";
 
 export default GObject.registerClass(
   {
@@ -11,6 +12,10 @@ export default GObject.registerClass(
   },
   class PopupWindow extends Astal.Window {
     private revealer: Gtk.Revealer;
+    private readonly timers = new TimerManager();
+    private openState = false;
+    private readonly niri = AstalNiri.get_default();
+    private suppressFocusClose = false;
 
     constructor(props: any & { child: Gtk.Widget }) {
       const { name, child, ...rest } = props;
@@ -47,15 +52,12 @@ export default GObject.registerClass(
       });
       this.add_controller(keyController);
 
-      const niri = AstalNiri.get_default();
-
-      niri.connect("notify::focused-window", (service) => {
-        if (service.focused_window?.title) {
-          this.hide_all();
-        }
+      this.niri.connect("overview-opened-or-closed", () => {
+        this.hide_all();
       });
 
-      niri.connect("overview-opened-or-closed", () => {
+      this.niri.connect("window-focus-changed", (_niri, windowId: number) => {
+        if (!this.openState || this.suppressFocusClose) return;
         this.hide_all();
       });
     }
@@ -63,32 +65,47 @@ export default GObject.registerClass(
     hide_others() {
       app.get_windows().forEach((window) => {
         if (window !== this && window.name !== "bar-background") {
-          window.hide();
+          const popup = window as typeof window & { hide_all?: () => void };
+          if (typeof popup.hide_all === "function") {
+            popup.hide_all();
+          } else {
+            window.hide();
+          }
         }
       });
     }
 
     hide_all() {
+      this.openState = false;
+      this.suppressFocusClose = false;
+      this.timers.clear();
       this.revealer.reveal_child = false;
+      this.set_visible(false);
+    }
 
-      setTimeout(() => {
-        if (!this.revealer.reveal_child) {
-          this.set_visible(false);
-        }
-      }, 50);
+    isOpen() {
+      return this.openState;
+    }
+
+    forceOpen() {
+      this.openState = true;
+      this.timers.clear();
+      this.suppressFocusClose = true;
+      this.timers.once(500, () => {
+        this.suppressFocusClose = false;
+      });
+      this.set_visible(true);
+      this.hide_others();
+      this.revealer.reveal_child = true;
     }
 
     toggle() {
-      if (this.get_visible() && this.revealer.reveal_child) {
+      if (this.isOpen()) {
         this.hide_all();
-      } else {
-        this.set_visible(true);
-        this.hide_others();
-
-        setTimeout(() => {
-          this.revealer.reveal_child = true;
-        }, 10);
+        return;
       }
+
+      this.forceOpen();
     }
   }
 );

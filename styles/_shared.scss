@@ -52,14 +52,25 @@ bar-button-background {
 }
 
 bar-module-button {
-  background-color: $base-transparent;
+  background-color: $crust-transparent;
   border-radius: $border-radius-circle;
-  border: 2px solid $surface2;
+  border: 2px solid $surface1;
   transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
   color: $subtext1;
-  font-size: 22px;
-  min-width: 60px;
-  min-height: 20px;
+  font-size: 20px;
+}
+
+bar-module-button-menu {
+  background-color: $crust-transparent;
+  border-radius: $border-radius-circle;
+  border: 2px solid $surface1;
+  transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  color: $blue;
+  font-size: 20px;
+}
+
+bar-module-button-menu:hover {
+  border: 2px solid $blue;
 }
 
 bar-module-button:hover {
@@ -154,6 +165,8 @@ progressbar trough {
   padding: 5px;
 }
 
-progressbar, progressbar trough, progressbar progress {
+progressbar,
+progressbar trough,
+progressbar progress {
   min-height: 15px;
 }

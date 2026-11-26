@@ -1,13 +1,13 @@
 import Gtk from "gi://Gtk?version=4.0";
 import app from "ags/gtk4/app";
 import { WindowName } from "../../constants";
-import { LockScreen } from "../LockScreen";
+import WidgetManager from "../../WidgetManager";
 import { PowerOptionsScreen } from "../PowerOptionsScreen";
 
 export function PowerButtonsWidget() {
 
     const modulesRightWindowName = WindowName.modulesRight;
-    const lockScreen = LockScreen();
+    const lockScreen = WidgetManager.GetLockScreenWindow();
     const powerOptionsWindow = PowerOptionsScreen();
 
     return (

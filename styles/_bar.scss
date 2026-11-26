@@ -4,19 +4,31 @@ bar {
   font-family: "Inter", "JetBrainsMono Nerd Font Propo", "Noto Sans CJK JP", "Noto Sans CJK KR";
   font-size: 18px;
   color: $subtext1;
-  margin: 1px;
+  background-color: $black;
+  margin: 0px;
+  min-width: 20px;
+  padding-left: 4px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right:4px;
+  border-left: 2px solid $surface1;
+}
+
+bar-start,
+bar-end,
+bar-center {
+  min-width: 46px;
 }
 
 graphics-mode-container {
-  background-color: $base-transparent;
+  background-color: $crust-transparent;
   border-radius: $border-radius-circle;
-  border: 2px solid $surface2;
-  padding-left: 12px;
-  padding-right: 12px;
+  border: 1px dashed $surface1;
+  min-height: 25px;
 }
 
 .discrete-graphics-icon {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   color: $subtext1;
 }
@@ -39,4 +51,179 @@ graphics-mode-container {
 .discrete-graphics-icon-suspending {
   @extend .discrete-graphics-icon;
   color: $orange;
+}
+
+graphics-popover {
+  padding: 8px;
+  min-width: 220px;
+}
+
+graphics-detail-label {
+  color: $subtext1;
+  font-weight: bold;
+}
+
+graphics-detail-value {
+  color: $text;
+  text-transform: capitalize;
+}
+
+graphics-mode-divider {
+  min-height: 1px;
+  background-color: $surface1;
+  margin: 4px 0;
+}
+
+graphics-mode-row {
+  background: transparent;
+  border: none;
+  border-radius: $border-radius;
+  padding: 6px 8px;
+}
+
+graphics-mode-row:hover {
+  background-color: $surface0;
+}
+
+graphics-mode-row-active {
+  background-color: $surface1;
+}
+
+graphics-mode-label {
+  color: $text;
+}
+
+graphics-mode-check {
+  color: $green;
+}
+
+ethernet-container {
+  background-color: $black;
+  border-radius: $border-radius-circle;
+  border: 1px solid $surface1;
+  min-height: 25px;
+}
+
+ethernet-icon {
+  font-size: 16px;
+  color: $subtext1;
+}
+
+wireless-container {
+  background-color: $black;
+  border-radius: $border-radius-circle;
+  border: 1px solid $surface1;
+  min-height: 25px;
+}
+
+wireless-icon {
+  font-size: 16px;
+  color: $subtext1;
+}
+
+wireless-popover {
+  padding: 8px;
+  min-width: 220px;
+}
+
+wireless-detail-row {
+  background: transparent;
+  border: none;
+  border-radius: $border-radius;
+  padding: 5px 6px;
+}
+
+wireless-detail-row:hover {
+  background-color: $surface0;
+}
+
+wireless-detail-label {
+  color: $subtext1;
+  font-weight: bold;
+}
+
+wireless-detail-value {
+  color: $text;
+}
+
+wireless-copy-icon {
+  color: $overlay1;
+  margin-left: 4px;
+}
+
+volume-button {
+  background-color: $black;
+  border-radius: $border-radius-circle;
+  border: 1px solid $surface1;
+  min-width: 46px;
+  min-height: 25px;
+}
+
+volume-button-icon {
+  font-size: 16px;
+  color: $subtext1;
+}
+
+volume-popover {
+  padding: 10px;
+  min-width: 300px;
+}
+
+volume-control-section {
+  padding: 2px 0;
+}
+
+volume-control-icon {
+  color: $subtext1;
+}
+
+volume-control-title {
+  color: $text;
+  font-weight: 700;
+}
+
+volume-control-percent {
+  color: $subtext1;
+  font-size: 14px;
+  min-width: 42px;
+}
+
+volume-device-name {
+  color: $subtext1;
+  font-size: 13px;
+}
+
+volume-section-label {
+  color: $overlay1;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+volume-device-row {
+  background: transparent;
+  border: none;
+  border-radius: $border-radius;
+  padding: 5px 6px;
+}
+
+volume-device-row:hover {
+  background-color: $surface0;
+}
+
+volume-device-row-name {
+  color: $text;
+  font-size: 13px;
+}
+
+volume-device-active {
+  color: $green;
+  font-size: 13px;
+}
+
+volume-popover-divider {
+  min-height: 1px;
+  background-color: $surface1;
+  margin: 2px 0;
 }

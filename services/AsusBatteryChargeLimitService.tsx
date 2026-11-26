@@ -1,6 +1,7 @@
 import GObject from "gi://GObject";
 import GLib from "gi://GLib";
 import { execAsync } from "ags/process";
+import { TimerManager } from "../TimerManager";
 
 const AsusBatteryChargeLimitServiceProperties = {
   "charge-limit": GObject.ParamSpec.int(
@@ -31,20 +32,30 @@ class InternalAsusBatteryChargeLimitService extends GObject.Object {
 
   private charge_limit = 0;
   private is_supported = false;
+  private readonly timers = new TimerManager();
+  private refreshInProgress = false;
 
   constructor() {
     super();
 
     this.refreshChargeLimit();
 
-    GLib.timeout_add(GLib.PRIORITY_DEFAULT, 30 * 1000, () => {
-      this.refreshChargeLimit();
-      return GLib.SOURCE_CONTINUE;
+    this.timers.repeat(30 * 1000, () => {
+      void this.refreshChargeLimit();
+      return true;
     });
   }
 
   public async refreshChargeLimit(): Promise<void> {
+    if (this.refreshInProgress) {
+      return;
+    }
+
+    this.refreshInProgress = true;
+
     const limit = await this.readChargeLimit();
+
+    this.refreshInProgress = false;
 
     if (limit === null) {
       if (this.is_supported) {

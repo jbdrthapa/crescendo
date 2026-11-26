@@ -1,7 +1,7 @@
 {
-    "open_weather_api_key": "",
-    "open_weather_city_code": "",
-    "measurement_units": "",
+    "open_weather_api_key": "d01c68be337cb37e43da079bf4f07ade",
+    "open_weather_city_code": "5350734",
+    "measurement_units": "imperial",
     "dock_launchers": [
         "brave",
         "kitty",

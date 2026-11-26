@@ -5,24 +5,10 @@ import app from "ags/gtk4/app";
 import { WindowName } from "../constants";
 import WidgetManager from "../WidgetManager";
 
-interface SettingsWindow extends PopupWindow {
-    Settings: () => void;
-    Today: () => void;
-    Apps: () => void;
-    Wallpaper: () => void;
-    Power: () => void;
-    toggle: () => void;
-}
-
 const windowName = WindowName.desktopMenu;
 
-function ShowSettings(action: (() => void) | undefined, settings: SettingsWindow | null) {
-    action?.();
-    settings?.toggle();
-}
-
 export function DesktopMenu() {
-    const settings = WidgetManager.GetSettingsWindow() as SettingsWindow | null;
+    const settings = WidgetManager.GetSettingsWindow();
 
     return new PopupWindow({
         name: windowName,
@@ -33,28 +19,37 @@ export function DesktopMenu() {
             <box orientation={Gtk.Orientation.VERTICAL}>
                 <button
                     cssName="desktop-menu-button"
-                    onClicked={() => ShowSettings(settings?.Apps, settings)}
+                    onClicked={() => {
+                        settings.Apps();
+                        settings.forceOpen();
+                    }}
                 >
                     Apps
                 </button>
-
                 <button
                     cssName="desktop-menu-button"
-                    onClicked={() => ShowSettings(settings?.Wallpaper, settings)}
+                    onClicked={() => {
+                        settings.Wallpaper();
+                        settings.forceOpen();
+                    }}
                 >
                     Wallpaper
                 </button>
-
                 <button
                     cssName="desktop-menu-button"
-                    onClicked={() => ShowSettings(settings?.Power, settings)}
+                    onClicked={() => {
+                        settings.Power();
+                        settings.forceOpen();
+                    }}
                 >
                     Power
                 </button>
-
                 <button
                     cssName="desktop-menu-button"
-                    onClicked={() => ShowSettings(settings?.Settings, settings)}
+                    onClicked={() => {
+                        settings.Settings();
+                        settings.forceOpen();
+                    }}
                 >
                     Settings
                 </button>

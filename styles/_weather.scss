@@ -8,20 +8,18 @@ weather-container {
 bar-weather-icon {
   font-size: 20px;
   font-weight: 800;
-  color: $sky;
-  padding-right: 10px;
-  margin-top: -3px;
+  color: $blue;
 }
 
 bar-weather-temperature {
-  font-weight: 700;
-  font-size: 18px;
+  font-weight: 500;
+  font-size: 20px;
   font-variant-caps: all-petite-caps;
   color: $subtext1;
 }
 
 detail-weather-icon {
-  color: $accent-background;
+  color: $blue;
   font-size: 42px;
 }
 

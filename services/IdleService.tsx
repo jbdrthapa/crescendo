@@ -1,6 +1,7 @@
 import GObject from "gi://GObject";
 import { execAsync, subprocess } from "ags/process";
 import GLib from "gi://GLib";
+import { TimerManager } from "../TimerManager";
 
 const IdleServiceProperties = {
     'is-idle-inhibited': GObject.ParamSpec.boolean(
@@ -12,7 +13,7 @@ const IdleServiceProperties = {
     ),
 };
 
-const checkTimer = 1 * 1000;
+const checkTimer = 3 * 1000;
 
 class InternalIdleService extends GObject.Object {
     static instance: InternalIdleService;
@@ -31,6 +32,9 @@ class InternalIdleService extends GObject.Object {
     private _displayPowerOnCommand = "niri msg action power-on-monitors";
 
     private _inhibitorProcess: any = null;
+    private readonly timers = new TimerManager();
+
+    private refreshInProgress = false;
 
     constructor() {
         super();
@@ -41,18 +45,19 @@ class InternalIdleService extends GObject.Object {
 
         this.refreshisIdleInhibited();
 
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, checkTimer, () => {
-            this.refreshisIdleInhibited();
-            return GLib.SOURCE_CONTINUE;
+        this.timers.repeat(checkTimer, () => {
+            void this.refreshisIdleInhibited();
+            return true;
         });
     }
 
     private async startIdleProcess() {
         try {
-            await execAsync(["pkill", "swayidle"]);
-        }
-        catch (err) {
-            console.error("failed to kill swayidle process.")
+            await execAsync(["bash", "-lc", "pkill -x swayidle || true"]);
+            const remains = await execAsync(["bash", "-lc", "pgrep -x swayidle >/dev/null && echo running || echo stopped"]);
+            console.log(`swayidle status: ${remains.trim()}`);
+        } catch (err) {
+            console.error("Failed to stop swayidle:", err);
         }
 
         execAsync(["swayidle", "-w", "timeout", this._lockScreenTimeout, this._lockScreenCommand, "timeout", this._displayPowerTimeout, this._displayPowerOffCommand, "resume", this._displayPowerOnCommand, "before-sleep", this._lockScreenCommand])
@@ -103,8 +108,11 @@ class InternalIdleService extends GObject.Object {
     }
 
     private async refreshisIdleInhibited() {
+        if (this.refreshInProgress) {
+            return;
+        }
+        this.refreshInProgress = true;
         try {
-
             const output = await execAsync(["systemd-inhibit", "--list", "--mode=block"]);
             this.is_idle_inhibited = output.includes("crescendo-shell");
             this.notify("is-idle-inhibited");
@@ -113,6 +121,8 @@ class InternalIdleService extends GObject.Object {
             console.error("Failed to query systemd-inhibit list:", err);
             return false;
 
+        } finally {
+            this.refreshInProgress = false;
         }
     }
 

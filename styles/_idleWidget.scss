@@ -1,12 +1,53 @@
 @use "theme" as *;
 
 idle-inhibitor-container {
-  background-color: $base-transparent;
-  border-radius: $border-radius-circle;
-  border: 2px solid $surface2;
-  padding-left: 12px;
-  padding-right: 12px;
-  min-width: 20px;
+    background-color: $crust-transparent;
+    border-radius: $border-radius-circle;
+    border: 1px dashed $surface1;
+    min-height: 25px;
+}
+
+idle-inhibitor-popover {
+    padding: 8px;
+    min-width: 220px;
+}
+
+idle-inhibitor-detail-label {
+    color: $subtext1;
+    font-weight: bold;
+}
+
+idle-inhibitor-detail-value {
+    color: $text;
+}
+
+idle-inhibitor-divider {
+    min-height: 1px;
+    background-color: $surface1;
+    margin: 4px 0;
+}
+
+idle-inhibitor-row {
+    background: transparent;
+    border: none;
+    border-radius: $border-radius;
+    padding: 6px 8px;
+}
+
+idle-inhibitor-row:hover {
+    background-color: $surface0;
+}
+
+idle-inhibitor-row-active {
+    background-color: $surface1;
+}
+
+idle-inhibitor-row-label {
+    color: $text;
+}
+
+idle-inhibitor-row-check {
+    color: $green;
 }
 
 .is-idle-inhibited {

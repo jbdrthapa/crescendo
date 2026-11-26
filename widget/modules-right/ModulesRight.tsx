@@ -9,10 +9,9 @@ import { DisplayControlsWidget } from "./DisplayControlsWidget";
 import { AudioControlsWidget } from "./AudioControlsWidget";
 import { PowerButtonsWidget } from "./PowerButtons";
 import { WindowName } from "../../constants";
+import WidgetManager from "../../WidgetManager";
 
 const windowName = WindowName.modulesRight;
-
-let ModulesRightPopup: any;
 
 export function ModulesRight() {
     const systemInfoWidget = SystemInfoWidget();
@@ -21,21 +20,14 @@ export function ModulesRight() {
     const audioControlsWidget = AudioControlsWidget();
     const powerButtonsWidget = PowerButtonsWidget();
 
-    const button = (
-        <button
-            onClicked={() => ModulesRightPopup.toggle()}
-            cssName={"bar-module-button"}
-        >
-            <label label={"󰣇"} />
-        </button>
-    ) as any;
-
-    ModulesRightPopup = new PopupWindow({
+    const popup = new PopupWindow({
         name: windowName,
         namespace: windowName,
         anchor: Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT,
         margin: 2,
         application: app,
+        marginTop: 10,
+        marginRight: 10,
         child: (
             <box
                 cssName="modules-right-container"
@@ -74,13 +66,29 @@ export function ModulesRight() {
         ),
     });
 
-    ModulesRightPopup.connect("notify::visible", () => {
-        if (ModulesRightPopup.visible) {
-            // reset UI if needed
+    popup.connect("notify::visible", () => {
+        if (popup.visible) {
+            // Reserved for future popup state synchronization.
         }
     });
 
-    button.popup = ModulesRightPopup;
+    const button = (
+        <button
+            cssName="bar-module-button-menu"
+        >
+            <label label="󰚾" />
+        </button>
+    ) as Gtk.Button & { popup: InstanceType<typeof PopupWindow> };
+
+    const gesture = new Gtk.GestureClick();
+    gesture.set_button(1);
+    gesture.connect("pressed", () => {
+        WidgetManager.SuppressNextBarClose();
+        popup.toggle();
+    });
+    button.add_controller(gesture);
+
+    button.popup = popup;
 
     return button;
 }

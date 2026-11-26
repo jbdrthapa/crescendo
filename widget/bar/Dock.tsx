@@ -1,8 +1,10 @@
 import Apps from "gi://AstalApps"
-import { execAsync, subprocess } from "ags/process";
+import { subprocess } from "ags/process";
 import Config from "../../conf/Config";
+import Utils from "../../Utils";
+import Gtk from "gi://Gtk?version=4.0"
 
-const terminal = "kitty";
+const terminal = Utils.GetTerminal();
 
 const appsService = new Apps.Apps()
 
@@ -11,14 +13,13 @@ const DOCK_LAUNCHERS = Config.GetDockLaunchers();
 function launch(app?: Apps.Application) {
     if (!app) return;
 
-    // Close the compositor overview
-    execAsync("niri msg action close-overview");
+    Utils.CloseOverview();
 
     const needsTerminal = app.get_key("Terminal") === "true";
 
     if (needsTerminal) {
         const cmd = `${terminal} -e ${app.executable}`;
-        subprocess(["bash", "-c", `${cmd} >/dev/null 2>&1 &`]);
+        subprocess(["bash", "-lc", `${cmd} >/dev/null 2>&1 &`]);
     } else {
         app.launch();
     }
@@ -26,7 +27,7 @@ function launch(app?: Apps.Application) {
 
 export default function Dock() {
     return (
-        <box cssName="dock-window">
+        <box cssName="dock-window" orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER} spacing={4}>
             {DOCK_LAUNCHERS.map(appName => {
                 const app: Apps.Application = appsService.fuzzy_query(appName)?.[0]
                     || appsService.get_list().find(a => a.name.toLowerCase().includes(appName.toLowerCase()))
@@ -45,7 +46,7 @@ export default function Dock() {
                         cssName="dock-item"
                         tooltipMarkup={`<b>Application: </b>${app.name}\n<b>Description: </b>${app.description || "Application Launcher"}`}
                         onClicked={() => {
-                            execAsync("niri msg action close-overview");
+                            Utils.CloseOverview();
                             launch(app);
                         }}>
                         <image iconName={app.icon_name || "application-x-executable"} pixelSize={22} />
