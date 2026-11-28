@@ -31,6 +31,12 @@ export function ModulesCenter() {
         return `${match[1].toUpperCase()} ${match[2].padStart(2, "0")}`;
     });
 
+    const dateOfWeek = date.as(value => {
+        const dateObj = new Date();
+        const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+        return dayOfWeek;
+    });
+
     const button = (
         <box hexpand={false} halign={Gtk.Align.CENTER} cssName={"date-time-weather-container"}>
             <button onClicked={() => {
@@ -44,7 +50,10 @@ export function ModulesCenter() {
                             <label label={hour} halign={Gtk.Align.CENTER} cssName={"bar-hour"} />
                             <label label={minute} halign={Gtk.Align.CENTER} cssName={"bar-minute"} />
                             <label label="" halign={Gtk.Align.CENTER} cssName={"bar-date-separator"} />
-                            <label label={monthDay} halign={Gtk.Align.CENTER} cssName={"bar-date"} />
+                            <box orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER} spacing={5}>
+                                <label label={monthDay} halign={Gtk.Align.CENTER} cssName={"bar-date"} />
+                                <label label={dateOfWeek} halign={Gtk.Align.CENTER} cssName={"bar-date-of-week"} />
+                            </box>
                         </box>
                     </box>
                     <box>

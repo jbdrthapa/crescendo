@@ -35,12 +35,18 @@ bar-minute {
   color: $accent-background-transparent;
 }
 
+bar-date-of-week {
+  font-weight: 600;
+  font-size: 12px;
+  font-variant-caps: all-petite-caps;
+  color: $yellow;
+}
+
 bar-date {
   font-weight: 600;
   font-size: 14px;
   font-variant-caps: all-petite-caps;
   color: $subtext1;
-  margin-top: 0;
 }
 
 time-container {
