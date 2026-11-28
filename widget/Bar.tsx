@@ -187,15 +187,12 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
     ) as Astal.Window;
 
     // Backdrop click gestures
-    const leftClickGesture = new Gtk.GestureClick();
-    leftClickGesture.set_button(1);
-    leftClickGesture.connect("released", () => {
+    desktopClickButton.connect("clicked", () => {
         GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
             CloseAllMenus(settings, modulesRight, desktopMenu);
             return GLib.SOURCE_REMOVE;
         });
     });
-    desktopClickButton.add_controller(leftClickGesture);
 
     const rightClickGesture = new Gtk.GestureClick();
     rightClickGesture.set_button(3);
