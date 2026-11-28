@@ -62,6 +62,7 @@ export function BatteryWidget() {
     battery.connect("notify::state", updateBatteryText);
     battery.connect("notify::time-to-full", updateBatteryText);
     battery.connect("notify::time-to-empty", updateBatteryText);
+    battery.connect("notify::energy-rate", updateBatteryText);
 
     const batteryTooltip = createBinding(battery, "state",)((s) => {
         let tooltip = "";
@@ -96,16 +97,26 @@ export function BatteryWidget() {
 
     })
 
+    // Create a box that shows time to empty/full, percentage and wattage based on battery state
+    const batteryInfoBox = <box cssName="battery-info" orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER} hexpand={true} spacing={5}>
+        <box orientation={Gtk.Orientation.HORIZONTAL} halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER} hexpand={true} spacing={5}>
+            <label cssName="battery-percent" halign={Gtk.Align.CENTER} hexpand={false} label={percent.peek()} />
+            <label cssName="battery-wattage" halign={Gtk.Align.CENTER} hexpand={false} label={energyRate.peek()} />
+        </box>
+        <label cssName="battery-time" halign={Gtk.Align.CENTER} hexpand={false} label={batteryText} />
+    </box>
+
     return (
         <box cssName="battery-container" orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.CENTER} valign={Gtk.Align.CENTER} hexpand={true} tooltipMarkup={batteryTooltip} widthRequest={30}>
             <levelbar
-                    heightRequest={60}
-                    orientation={Gtk.Orientation.VERTICAL}
-                    hexpand={false}
-                    vexpand={false}
-                    cssName={"battery-bar"}
-                    value={percentBinding.as(v => v)}
-                />
+                heightRequest={80}
+                orientation={Gtk.Orientation.VERTICAL}
+                hexpand={false}
+                vexpand={false}
+                cssName={"battery-bar"}
+                value={percentBinding.as(v => v)}
+            />
+            {batteryInfoBox}
         </box>
 
     )

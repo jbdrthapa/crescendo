@@ -21,9 +21,6 @@ bar-center {
 }
 
 graphics-mode-container {
-  background-color: $crust-transparent;
-  border-radius: $border-radius-circle;
-  border: 1px dashed $surface1;
   min-height: 25px;
 }
 
@@ -98,9 +95,6 @@ graphics-mode-check {
 }
 
 ethernet-container {
-  background-color: $black;
-  border-radius: $border-radius-circle;
-  border: 1px solid $surface1;
   min-height: 25px;
 }
 
@@ -110,9 +104,6 @@ ethernet-icon {
 }
 
 wireless-container {
-  background-color: $black;
-  border-radius: $border-radius-circle;
-  border: 1px solid $surface1;
   min-height: 25px;
 }
 
@@ -152,9 +143,6 @@ wireless-copy-icon {
 }
 
 volume-button {
-  background-color: $black;
-  border-radius: $border-radius-circle;
-  border: 1px solid $surface1;
   min-width: 46px;
   min-height: 25px;
 }

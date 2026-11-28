@@ -1,9 +1,6 @@
 @use "theme" as *;
 
 kdeconnect-container {
-  background-color: $black;
-  border-radius: $border-radius-circle;
-  border: 1px solid $surface1;
   min-height: 25px;
   padding: 0 5px;
   min-width: 32px;
